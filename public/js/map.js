@@ -82,7 +82,7 @@ function initMap () {
         var newShape = e.overlay; 
         newShape.type = e.type;
         shape_list.push(newShape);
-        console.log(shape_list.length)
+        
         if (e.type !== google.maps.drawing.OverlayType.MARKER) {
             // Switch back to non-drawing mode after drawing a shape.
             drawingManager.setDrawingMode(null);
@@ -176,7 +176,7 @@ function initMap () {
     {lat: -37.819616, lng: 144.968119,id: "12"},
     {lat: -38.330766, lng: 144.695692,id: "13"},
     {lat: -39.927193, lng: 175.053218,id: "14"},
-    {lat: -41.330162, lng: 174.865694,id: "156"},
+    {lat: -41.330162, lng: 174.865694,id: "15"},
     {lat: -42.734358, lng: 147.439506,id: "16"},
     {lat: -42.734358, lng: 147.501315,id: "17"},
     {lat: -42.735258, lng: 147.438000,id: "18"},
