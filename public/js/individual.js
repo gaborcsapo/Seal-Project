@@ -1,150 +1,113 @@
 var updateIndividual = function(msg){
     console.log(msg);
 }
-var margin = 50,
-    width = parseInt(d3.select("#individual").style("width")) - margin*2,
-    height = parseInt(d3.select("#individual").style("height")) - margin*2;
-console.log(height);
 
-var xScale = d3.time.scale()
-    .range([0, width])
-    .nice(d3.time.year);
+var Chart = (function(window,d3) {
+  var data,
+  margin = {top: 15, right: 40, bottom: 15, left: 40},
+  width = 600 - margin.left - margin.right,
+  height = 270 - margin.top - margin.bottom,
+  parseDate = d3.time.format("%d-%b-%y").parse,
+  y,
+  x0,
+  x1,
+  yAxis,
+  xAxisBottom,
+  xAxisTop,
+  valueline,
+  valueline2,
+  svg,
+  breakPoint = 270;
+        
+  d3.csv("data2a.csv", init);
 
-var yScale = d3.scale.linear()
-    .range([height, 0])
-    .nice();
+  function init(csv) {
+    data = csv;
+    data.forEach(function(d) {
+      d.date = parseDate(d.date);
+      d.close = +d.close;
+      d.open = +d.open;
+    });
 
-var xAxis = d3.svg.axis()
-    .scale(xScale)
-    .orient("bottom");
+    y = d3.time.scale().domain(d3.extent(data, function(d) { return d.date; }));
+    x0 = d3.scale.linear().domain([0, d3.max(data, function(d) {return Math.max(d.close); })]); 
+    x1 = d3.scale.linear().domain([0, d3.max(data, function(d) {return Math.max(d.open); })]);
+    
+    valueline = d3.svg.line()
+        .y(function(d) { return y(d.date); })
+        .x(function(d) { return x0(d.close); });       
+    valueline2 = d3.svg.line()
+        .y(function(d) { return y(d.date); })
+        .x(function(d) { return x1(d.open); });
 
-var yAxis = d3.svg.axis()
-    .scale(yScale)
-    .orient("left");
-
-var line = d3.svg.line()
-    .x(function(d) { return xScale(d.date); })
-    .y(function(d) { return yScale(d.close); });
-
-var individual = d3.select("#individual")
-    .attr("width", width + margin*2)
-    .attr("height", height + margin*2)
-  .append("g")
-    .attr("transform", "translate(" + (margin-10) + ",0)");
-
-d3.csv("amzn.csv", function(error, data) {
-  data.forEach(function(d) {
-    d.date = d3.time.format("%Y-%m-%d").parse(d.date);
-    d.close = +d.close;
-  });
-
-  xScale.domain(d3.extent(data, function(d) { return d.date; }));
-  yScale.domain(d3.extent(data, function(d) { return d.close; }));
-
-  individual.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
-
-  individual.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Price ($)");
-
-  dataPerPixel = data.length/width;
-  dataResampled = data.filter(
-    function(d, i) { return i % Math.ceil(dataPerPixel) == 0; }
-  );
-
-  individual.append("path")
-      .datum(dataResampled)
-      .attr("class", "line")
-      .attr("d", line);
-
-  var firstRecord = data[data.length-1], 
-      lastRecord = data[0];
-
-  var first = individual.append("g")
-    .attr("class", "first")
-    .style("display", "none");
-
-  first.append("text")
-    .attr("x", -8)
-    .attr("y", 4)
-    .attr("text-anchor", "end")
-    .text("$" + firstRecord.close);
-  first.append("circle")
-    .attr("r", 4);
-
-
-  var last = individual.append("g")
-    .attr("class", "last")
-    .style("display", "none");
-
-  last.append("text")
-    .attr("x", 8)
-    .attr("y", 4)
-    .text("$" + lastRecord.close);
-  last.append("circle")
-    .attr("r", 4);
-
-  function resize() {
-    var width = parseInt(d3.select("#individual").style("width")) - margin*2,
-    height = parseInt(d3.select("#individual").style("height")) - margin*2;
-
-    xScale.range([0, width]).nice(d3.time.year);
-    yScale.range([height, 0]).nice();
-
-    if (width < 300 && height < 80) {
-      individual.select('.x.axis').style("display", "none");
-      individual.select('.y.axis').style("display", "none");
+    yAxis = d3.svg.axis().orient("left").ticks(5);
+    xAxisBottom = d3.svg.axis().orient("bottom").ticks(5);
+    xAxisTop = d3.svg.axis().orient("top").ticks(5); 
+    
+    svg = d3.select("#individual").append("svg");
+    wrapper = svg.append("g");
       
-      individual.select(".first")
-        .attr("transform", "translate(" + xScale(firstRecord.date) + "," + yScale(firstRecord.close) + ")")
-        .style("display", "initial");
+    wrapper.append("g")            
+        .attr("class", "y axis")
 
-      individual.select(".last")
-        .attr("transform", "translate(" + xScale(lastRecord.date) + "," + yScale(lastRecord.close) + ")")
-        .style("display", "initial");
-    } else {
-      individual.select('.x.axis').style("display", "initial");
-      individual.select('.y.axis').style("display", "initial");
-      individual.select(".last")
-        .style("display", "none");
-      individual.select(".first")
-        .style("display", "none");
-    }
+    wrapper.append("g")
+        .attr("class", "x0 axis")        	
+        .style("fill", "steelblue")       	
 
-    yAxis.ticks(Math.max(height/50, 2));
-    xAxis.ticks(Math.max(width/50, 2));
+    wrapper.append("g")				
+        .attr("class", "x1 axis")	
+        .style("fill", "red")
+    
+    path1 = wrapper.append("path");
+    path2 = wrapper.append("path").style("stroke", "red");
+    
+    window.addEventListener('resize', Chart.render);
+    render();
+  };
 
-    individual
-      .attr("width", width + margin*2)
-      .attr("height", height + margin*2)
+  function render(){
+      margin.left = parseInt(d3.select("#individual").style("width")) < breakPoint ? 5 : 40;
+      width = parseInt(d3.select("#individual").style("width")) - margin.right - margin.left;
+      height = width*1.1;
+      if (height > (600-margin.left-margin.right))
+        height = (600-margin.left-margin.right);
+      
+      yAxis.scale(y).orient(parseInt(d3.select("#individual").style("width")) < breakPoint ? 'right' : 'left');
 
-    individual.select('.x.axis')
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
+      y.range([0, height]);
+      x0.range([0, width]);
+      x1.range([0, width]);
 
-    individual.select('.y.axis')
-      .call(yAxis);
+      svg.attr("width", '100%' ).attr("height", height + margin.top + margin.bottom);
+      wrapper.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    dataPerPixel = data.length/width;
-    dataResampled = data.filter(
-      function(d, i) { return i % Math.ceil(dataPerPixel) == 0; }
-    );
+      path1.attr("d", valueline(data));
+      path2.attr("d", valueline2(data));
+      
+      xAxisBottom.scale(x0);
+      xAxisTop.scale(x1);
+      yAxis.scale(y);
 
-    individual.selectAll('.line')
-      .datum(dataResampled)
-      .attr("d", line);
+      if(parseInt(d3.select("#individual").style("width")) < breakPoint) {
+        xAxisBottom.ticks(3);
+        xAxisTop.ticks(3)
+      }
+      else {
+        xAxisBottom.ticks(6);
+        xAxisTop.ticks(6)
+      }
+
+      wrapper.select('.x0.axis')
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxisBottom);
+      wrapper.select('.x1.axis')
+        .call(xAxisTop);
+      wrapper.select('.y.axis')
+        .call(yAxis);
+  }
+  
+  return {
+    render : render
   }
 
-  d3.select(window).on('resize', resize); 
-
-  resize();
-});
+})(window,d3);

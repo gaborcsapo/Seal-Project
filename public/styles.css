@@ -12,8 +12,8 @@ body {
     max-height: 600px;
 }
 
-#individual-container {
-    height: 40vh;
+#individual {
+    height: 50vh;
     max-height: 600px;
     font-size: 0.5em;
 }
@@ -23,11 +23,18 @@ circle {
     opacity: 0.5;
 }
 
+path { 
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+
 .axis path,
 .axis line {
-  fill: none;
-  stroke: #555;
-  shape-rendering: crispEdges;
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
 }
 
 .axis text {
@@ -43,5 +50,4 @@ circle {
 #individual {
   width: 100%;
   height: 100%;
-  position: absolute;
 }
