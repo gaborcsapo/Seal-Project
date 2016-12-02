@@ -1,8 +1,8 @@
 body {
     font-family: 'Montserrat', sans-serif !important;
-    font-weight: 100 !important;
 }
 
+/*MAP*/
 .gm-style-cc{
     display:none!important;
 }
@@ -16,34 +16,47 @@ circle {
     fill: red;
     opacity: 0.5;
 }
+/*INDIVIDUAL SCATTERPLOT*/
+#individual {
+  width: 100%;
+  height: 100%;
+  font-size: 0.5em;
+  max-height: 600px;
+}
 
-path { 
+#individual path { 
     stroke: steelblue;
-    stroke-width: 2;
     fill: none;
 }
 
-.axis path,
-.axis line {
+#individual .axis path,
+#individual .axis line {
     fill: none;
     stroke: grey;
     stroke-width: 1;
     shape-rendering: crispEdges;
 }
 
-.axis text {
+#individual .axis text {
   fill: #555;
 }
 
-.line {
+#individual .line {
   fill: none;
   stroke: #ef0d0c;
   stroke-width: 1.5px;
 }
 
-#individual {
-  width: 100%;
-  height: 100%;
-  font-size: 0.5em;
-  max-height: 600px;
+
+/*SPIRAL GRAPH*/
+#spiral{
+    font-size: 0.55em;
+    font-family: 'Arial';
+    stroke-width: 1;
+    stroke: gray;
+}
+
+#spiral .arc{
+    stroke-width: 0;
+
 }
