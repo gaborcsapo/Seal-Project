@@ -1,7 +1,3 @@
-var updateIndividual = function(msg){
-    console.log(msg);
-}
-
 var Chart = (function(window,d3) {
     // setting up variables in the initial stage
   var data,
@@ -25,33 +21,28 @@ var Chart = (function(window,d3) {
   valueline2,
   xAxisBottom,
   breakPoint = 270;
-  //reading in the data
-  d3.csv("data2a.csv", init);
 
   //this function sets up the visualization. But only the parts that never change (on resize)
-  function init(csv) {
-    data = csv;
-    data.forEach(function(d) {
-      d.date = parseDate(d.date);
-      d.close = +d.close;
-      d.open = +d.open;
-    });
+  function init(index) {
+    data = sdata[index]['points'];    
     //scales
-    y = d3.time.scale().domain(d3.extent(data, function(d) { return d.date; }));
-    x0 = d3.scale.linear().domain([0, d3.max(data, function(d) {return Math.max(d.close); })]); 
-    x1 = d3.scale.linear().domain([0, d3.max(data, function(d) {return Math.max(d.open); })]);
+    y = d3.scale.linear().domain(d3.extent(data, function(d) { return d['depth']; }));
+    x0 = d3.scale.linear().domain([0, d3.max(data, function(d) {return Math.max(d['temp']); })]); 
+    x1 = d3.scale.linear().domain([0, d3.max(data, function(d) {return Math.max(d['sal']); })]);
     //line graphs are created like this
     valueline = d3.svg.line()
-        .y(function(d) { return y(d.date); })
-        .x(function(d) { return x0(d.close); });       
+      .y(function(d) { return y(d['depth']); })
+      .x(function(d) { return x0(d['temp']); });       
     valueline2 = d3.svg.line()
-        .y(function(d) { return y(d.date); })
-        .x(function(d) { return x1(d.open); });
+      .y(function(d) { return y(d['depth']); })
+      .x(function(d) { return x1(d['sal']); });
     //setting up the axiis
     yAxis = d3.svg.axis().orient("left").ticks(5);
     xAxisBottom = d3.svg.axis().orient("bottom").ticks(5);
     xAxisTop = d3.svg.axis().orient("top").ticks(5); 
     //creating the svg items that are later shaped into what we need
+    $("#individual").html("");
+    d3.select("#individual").selectAll("*").remove();
     svg = d3.select("#individual").append("svg");
     wrapper = svg.append("g");
       
@@ -132,7 +123,12 @@ var Chart = (function(window,d3) {
   }
   
   return {
-    render : render
+    render : render,
+    init : init
   }
 
 })(window,d3);
+
+var updateIndividual = function(msg){
+    Chart.init(msg);
+}

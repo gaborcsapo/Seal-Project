@@ -37,7 +37,7 @@ function deleteSelectedShape () {
 
 function finishedLoading(){
     let promiseMap = new Promise((resolve, reject) => {
-        console.log(2);
+        console.log('map is created');
         var map = new google.maps.Map(document.getElementById('map'), {
             center: {lat: 69.184529, lng: -50.462265},
             zoom: 8,
@@ -142,30 +142,26 @@ function finishedLoading(){
         }
 
         putLocations = function(){
-            console.log(3)
+            console.log('locations are being put');
             var singleMarker;
-            var markers = sdata.map(function(location, i) {
+            var markers = Object.keys(sdata).map(function(key, i){
                 singleMarker = new google.maps.Marker({
-                    position: {'lat':location.LAT, 'lng':location.LON},
-                    icon: locationImage,
-                    title: location.ref
-                });
-                google.maps.event.addListener(singleMarker, 'click', function (e) {
-                    updateIndividual(singleMarker.title);
-                })
-                return singleMarker;
-            });
-            console.log(markers);
-                
+                        position: sdata[key]['loc'],
+                        icon: locationImage,
+                        title: key
+                    });
+                    google.maps.event.addListener(singleMarker, 'click', function (e) {
+                        updateIndividual(this.getTitle());
+                    })
+                    return singleMarker;
+            })
             // Add a marker clusterer to manage the markers.
             var markerCluster = new MarkerClusterer(map, markers,
                 {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
         }     
     });
-    console.log('1');
     
-    promiseMap
-    .then(promiseFile1
+    promiseMap.then(promiseFile1
         .then(function(data){return createDataPoint(data)
             .then(promiseFile2
                 .then(function(data){return createDataPoint(data)

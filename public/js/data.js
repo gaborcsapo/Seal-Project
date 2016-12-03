@@ -1,24 +1,11 @@
-var files = [];
-
-// sdata combines all data files and contains objects for each depth measurement
-var sdata = [];
-
-function dataPoint(data, depth, temp, sal) {
-    this.ref = data.ref;
-    this.PTT = data.PTT
-    this.END_DATE = data.END_DATE;
-    this.MAX_DBAR = data.MAX_DBAR;
-    this.LAT = data.LAT;
-    this.LON = data.LON;
-    this.DBAR = depth;
-    this.TEMP = temp;
-    this.SAL = sal;
-}
+var sdata = {};
+var id = 0;
 
 function createDataPoint(data){
     return new Promise(function (resolve, reject) {
-        files.push(data);
         data.forEach(function(d) {
+            //incrementing id to create unique identifier
+            id++;
 
             // DELETE CAST TO NUMBER EVERYTHINg!!!!!!!!!!!!!!!!!
             d.LAT = Number(d.LAT);
@@ -56,11 +43,11 @@ function createDataPoint(data){
             for (var i = 0; i < d.SAL_CORRECTED_VALS.length; i++) {
                 d.SAL_CORRECTED_VALS[i] = +d.SAL_CORRECTED_VALS[i];
             }
-
+            //the actual object where the data is stores
+            sdata[id] = {'ref':d.ref, 'ptt':d.PTT, 'date': d.END_DATE, 'loc':{'lat':d.LAT, 'lng':d.LON}, 'points':[]}
             //Add objects for the various depths into sdata array
             for (var i = 0; i < d.N_TEMP; i++) {
-                point = new dataPoint(d, d.TEMP_DBAR[i], d.TEMP_VALS[i], d.SAL_VALS[i]);
-                sdata.push(point);
+                sdata[id]['points'].push({'depth':d.TEMP_DBAR[i], 'temp':d.TEMP_VALS[i], 'sal':d.SAL_VALS[i]}) 
             }
         });
         console.log('file loaded')
@@ -99,7 +86,6 @@ var module$1 = {};
 });
 
 return module$1;
-
 })));
 
 
