@@ -47,7 +47,7 @@ function createDataPoint(data){
             sdata[id] = {'ref':d.ref, 'ptt':d.PTT, 'date': d.END_DATE, 'loc':{'lat':d.LAT, 'lng':d.LON}, 'points':[]}
             //Add objects for the various depths into sdata array
             for (var i = 0; i < d.N_TEMP; i++) {
-                sdata[id]['points'].push({'depth':d.TEMP_DBAR[i], 'temp':d.TEMP_VALS[i], 'sal':d.SAL_VALS[i]}) 
+                sdata[id]['points'].push({'depth':d.TEMP_DBAR[i], 'temp':d.TEMP_VALS[i], 'sal':d.SAL_VALS[i]})
             }
         });
         console.log('file loaded')
@@ -92,3 +92,9 @@ return module$1;
 let promiseFile1 = d3.promise.csv("rs14years12.csv");
 let promiseFile2 = d3.promise.csv("rs19years13.csv");
 let promiseFile3 = d3.promise.csv("rs23years14-15.csv");
+// let promiseFile2 = d3.promise.csv("ct71years11.csv");
+// let promiseFile2 = d3.promise.csv("rs15years12.csv");
+// let promiseFile2 = d3.promise.csv("rs17years13.csv");
+// let promiseFile2 = d3.promise.csv("rs22years14.csv");
+// let promiseFile2 = d3.promise.csv("rs27years15.csv");
+// let promiseFile2 = d3.promise.csv("rs29years16.csv");
