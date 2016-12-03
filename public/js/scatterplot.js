@@ -26,7 +26,7 @@ var ScatterPlot = (function(window,d3) {
 
     function render(){
         width = parseInt(d3.select("#scatterplot").style("width"));
-        height = parseInt(width * .6);
+        height = parseInt(width * .7);
         svgContainer.attr("width", width).attr("height", height);
         xScale.range([0,width]);
         yScale.range([0,width]);
