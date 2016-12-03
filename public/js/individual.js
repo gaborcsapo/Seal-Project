@@ -41,7 +41,6 @@ var Chart = (function(window,d3) {
     xAxisBottom = d3.svg.axis().orient("bottom").ticks(5);
     xAxisTop = d3.svg.axis().orient("top").ticks(5); 
     //creating the svg items that are later shaped into what we need
-    $("#individual").html("");
     d3.select("#individual").selectAll("*").remove();
     svg = d3.select("#individual").append("svg");
     wrapper = svg.append("g");

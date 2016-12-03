@@ -7,6 +7,8 @@ var containQuery;
 var putLocations;
 var location_list = [];
 var putLocations = function(){};
+var locSelection;
+var queryKeys;
 
 function clearSelection () {
     if (selectedShape) {
@@ -38,6 +40,7 @@ function deleteSelectedShape () {
 function finishedLoading(){
     let promiseMap = new Promise((resolve, reject) => {
         console.log('map is created');
+        
         var map = new google.maps.Map(document.getElementById('map'), {
             center: {lat: 69.184529, lng: -50.462265},
             zoom: 8,
@@ -114,6 +117,9 @@ function finishedLoading(){
                 });
                 setSelection(newShape);
             }
+
+            locationQuery();
+
         });
         //Only allow 2 markers to be on the map
         google.maps.event.addListener(drawingManager, 'markercomplete', function (e) {
@@ -129,17 +135,6 @@ function finishedLoading(){
         google.maps.event.addListener(drawingManager, 'drawingmode_changed', clearSelection);
         google.maps.event.addListener(map, 'click', clearSelection);
         google.maps.event.addDomListener(document.getElementById('delete-button'), 'click', deleteSelectedShape);
-
-        containQuery = function(mylong, mylat){
-            for (var i=0; i<shape_list.length; i++){
-                if (google.maps.geometry.poly.containsLocation(new google.maps.LatLng({lat: mylat, lng: mylong}), shape_list[i])){
-                    console.log("Contained");
-                    break;
-                } else {
-                    console.log("Not contained");
-                }
-            }  
-        }
 
         putLocations = function(){
             console.log('locations are being put');
@@ -160,7 +155,27 @@ function finishedLoading(){
                 {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
         }     
     });
+
+    function locationQuery (){
+        promise = new Promise(function (resolve, reject) {
+            queryKeys = [];
+            for (var key in sdata) {
+                for (var i=0; i<shape_list.length; i++){
+                    if (google.maps.geometry.poly.containsLocation(new google.maps.LatLng(sdata[key]['loc']), shape_list[i])){
+                        queryKeys.push(key);
+                        break;
+                    } 
+                } 
+            }
+        });
+        promise.then(makeSelection())
+    } 
     
+    function makeSelection(){
+        locSelection = _.pick(sdata, queryKeys);
+        console.log(locSelection);
+    }
+
     promiseMap.then(promiseFile1
         .then(function(data){return createDataPoint(data)
             .then(promiseFile2

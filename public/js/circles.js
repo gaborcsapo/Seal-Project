@@ -14,7 +14,7 @@ var Spiral = (function(window,d3){
     
     donutThickness = 20,
     donutDistance = 20,
-    periods = 3,
+    periods = 4,
     elementsPerPeriod = 365,
     baseRadius = 100,
     radius = baseRadius,
@@ -47,7 +47,7 @@ var Spiral = (function(window,d3){
     monthNameSvg,
     months = ['Dec','Jan','Feb','Mar','Apr','May','June','July','Aug','Sept','Oct','Nov','kru'];
     colorList = ['red','blue','green', 'yellow'],
-    periodNames = [{name:'2012',pos:null},{name:'2013',pos:null},{name:'2014',pos:null}],
+    periodNames = [{name:'2012',pos:null},{name:'2013',pos:null},{name:'2014',pos:null},{name:'2015',pos:null}],
     periodNameSVG = null;
      
     $(document).ready(function(){
