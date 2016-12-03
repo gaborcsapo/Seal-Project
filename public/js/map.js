@@ -171,6 +171,5 @@ function finishedLoading(){
                 .then(function(data){return createDataPoint(data)
                     .then(promiseFile3
                         .then(function(data){return createDataPoint(data)
-                            .then(putLocations())}))}))}));
-    
+                            .then(putLocations())}))}))}));   
 }
