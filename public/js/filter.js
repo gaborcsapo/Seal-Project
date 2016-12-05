@@ -26,8 +26,9 @@ function makeLocSelection(){
 function makeTimeSelection(){
     queryKeys = [];
     for (key in locSelection) {
-        dateParts =locSelection[key].date.split('/');
+        dateParts = locSelection[key].date.split('/');
         if (new Date(dateParts[2],dateParts[0]-1,dateParts[1]) > lowerTime && new Date(dateParts[2],dateParts[0]-1,dateParts[1]) < upperTime)
+            locSelection[key].date = new Date(dateParts[2],dateParts[0]-1,dateParts[1]);
             queryKeys.push(key)
     }
     timeSelection = _.pick(locSelection, queryKeys);
@@ -38,17 +39,31 @@ function makeDepthSelection(){
     queryKeys = [];
     for (key in timeSelection) {
         for (var i = 0; i < timeSelection[key].points.length; i++){
-            console.log(timeSelection[key].points[i].depth);
             if (timeSelection[key].points[i].depth > lowerDepth && timeSelection[key].points[i].depth < upperDepth)
-                depthSelection.push({'id': key, 'x':distCalc(new google.maps.LatLng(timeSelection[key].loc.lat, timeSelection[key].loc.lng)), 'depth':timeSelection[key].points[i].depth, 'sal':timeSelection[key].points[i].sal, 'temp':timeSelection[key].points[i].temp})
+                depthSelection.push({
+                    'id': key, 
+                    'date': timeSelection[key].date, 
+                    'x':bdccGeoDistanceToPolyMtrs(markerLine, new google.maps.LatLng(timeSelection[key].loc.lat, timeSelection[key].loc.lng)), 
+                    'depth':timeSelection[key].points[i].depth, 
+                    'sal':timeSelection[key].points[i].sal, 
+                    'temp':timeSelection[key].points[i].temp
+                })
         }
     }
     console.log(depthSelection);
+    aggregateDays();
 }
 
-function distCalc(loc){
-    console.log(loc);
-    return bdccGeoDistanceToPolyMtrs(markerLine, loc);
+function aggregateDays(){
+    circleData = {};
+    for (var i = 0; i < depthSelection.length; i++) {
+        if (_.has(circleData, depthSelection[i].date.getTime()/1000)){
+            circleData[depthSelection[i].date.getTime()/1000].push(depthSelection[i]);
+        } else {
+            circleData[depthSelection[i].date.getTime()/1000] = [depthSelection[i]];
+        }
+    }
+    console.log(circleData);
 }
 
 $(document).ready(function(){
