@@ -39,6 +39,12 @@ function createDataPoint(data){
                 d.SAL_VALS[i] = +d.SAL_VALS[i];
             }
             //Sal_CORRECTED_VALS
+            if (d.SAL_CORRECTED_VALS == undefined){
+                console.log("no value");
+                console.log(d);
+                return true;
+            }
+
             d.SAL_CORRECTED_VALS = d.SAL_CORRECTED_VALS.split(",");
             for (var i = 0; i < d.SAL_CORRECTED_VALS.length; i++) {
                 d.SAL_CORRECTED_VALS[i] = +d.SAL_CORRECTED_VALS[i];
@@ -92,9 +98,9 @@ return module$1;
 let promiseFile1 = d3.promise.csv("rs14years12.csv");
 let promiseFile2 = d3.promise.csv("rs19years13.csv");
 let promiseFile3 = d3.promise.csv("rs23years14-15.csv");
-// let promiseFile2 = d3.promise.csv("ct71years11.csv");
-// let promiseFile2 = d3.promise.csv("rs15years12.csv");
-// let promiseFile2 = d3.promise.csv("rs17years13.csv");
-// let promiseFile2 = d3.promise.csv("rs22years14.csv");
-// let promiseFile2 = d3.promise.csv("rs27years15.csv");
-// let promiseFile2 = d3.promise.csv("rs29years16.csv");
+let promiseFile4 = d3.promise.csv("ct71years11.csv");
+let promiseFile5 = d3.promise.csv("rs15years12.csv");
+let promiseFile6 = d3.promise.csv("rs17years13.csv");
+let promiseFile7 = d3.promise.csv("rs22years14.csv");
+let promiseFile8 = d3.promise.csv("rs27years15.csv");
+let promiseFile9 = d3.promise.csv("rs29years16.csv");

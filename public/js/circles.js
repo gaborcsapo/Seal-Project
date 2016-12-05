@@ -97,7 +97,7 @@ var Spiral = (function(window,d3){
       
       for (var periodIndex = 0; periodIndex < periods; periodIndex++) {
         periodNames[periodIndex].pos = baseRadius + donutThickness + periodIndex*(donutThickness + donutDistance) + donutDistance/3; 
-    }
+      }
 
       xScale = d3.scale.linear().domain([d3.min(spiralElemPos, function(d) {return d.p[1].x - padding;}), d3.max(spiralElemPos, function(d) {return d.p[1].x + padding;})]);
       yScale = d3.scale.linear().domain([d3.min(spiralElemPos, function(d) {return d.p[1].y - padding;}), d3.max(spiralElemPos, function(d) {return d.p[1].y + padding;})]);
@@ -112,7 +112,7 @@ var Spiral = (function(window,d3){
 
       spiralLine = svgContainer.append('g').attr('id','spiralLine').selectAll('path')
         .data(spiralElemPos)
-        .enter().append("polygon")
+        .enter().append("polygon") 
         .attr("fill", function(d){return d.c;})
         .attr("stroke", function(d){return d.c;});
       

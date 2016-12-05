@@ -7,8 +7,7 @@ var containQuery;
 var putLocations;
 var location_list = [];
 var putLocations = function(){};
-var locSelection;
-var queryKeys;
+var queryKeys = [];
 
 function clearSelection () {
     if (selectedShape) {
@@ -28,14 +27,14 @@ function setSelection (shape) {
 
 function deleteSelectedShape () {
     if (selectedShape){
-        for (var i=0; i<=marker_list.lenght;i++){
-            if (selectedShape.equals(marker_list[i]))
-                marker_list.splice(i,1);
+        for (var i=0; i<=shape_list.length;i++){
+            if (_.isEqual(selectedShape,shape_list[i])){
+                shape_list.splice(i,1);
+                 selectedShape.setMap(null);
+            }
         }
-        selectedShape.setMap(null);
     }
-        
-}
+}      
 
 function finishedLoading(){
     let promiseMap = new Promise((resolve, reject) => {
@@ -167,13 +166,9 @@ function finishedLoading(){
                     } 
                 } 
             }
+            return queryKeys;
         });
-        promise.then(makeSelection())
-    } 
-    
-    function makeSelection(){
-        locSelection = _.pick(sdata, queryKeys);
-        console.log(locSelection);
+        promise.then(makeLocSelection())
     }
 
     promiseMap.then(promiseFile1
@@ -182,5 +177,17 @@ function finishedLoading(){
                 .then(function(data){return createDataPoint(data)
                     .then(promiseFile3
                         .then(function(data){return createDataPoint(data)
-                            .then(putLocations())}))}))}));   
+                            .then(promiseFile4
+                                .then(function(data){return createDataPoint(data)
+                                    .then(promiseFile5
+                                        .then(function(data){return createDataPoint(data)
+                                            .then(promiseFile6
+                                                .then(function(data){return createDataPoint(data)
+                                                    .then(promiseFile7
+                                                        .then(function(data){return createDataPoint(data)
+                                                            .then(promiseFile8
+                                                                .then(function(data){return createDataPoint(data)
+                                                                    .then(promiseFile9
+                                                                        .then(function(data){return createDataPoint(data)
+                                                                            .then(putLocations())}))}))}))}))}))}))}))}))}));   
 }
