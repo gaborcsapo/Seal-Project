@@ -8,6 +8,9 @@ var putLocations;
 var location_list = [];
 var putLocations = function(){};
 var queryKeys = [];
+var markerSet = 0;
+var markerList = [];
+var markerLine;
 
 function clearSelection () {
     if (selectedShape) {
@@ -62,6 +65,13 @@ function finishedLoading(){
             editable: true,
             draggable: true
         };
+        markerLine = new google.maps.Polyline({
+            strokeColor: 'red',
+            strokeOpacity: 0.5,
+            strokeWeight: 3,
+            geodesic: true,
+            map: map
+        });
         // Creates a drawing manager attached to the map that allows the user to draw
         // markers, lines, and shapes.
         drawingManager = new google.maps.drawing.DrawingManager({
@@ -85,7 +95,24 @@ function finishedLoading(){
         google.maps.event.addListener(drawingManager, 'overlaycomplete', function (e) {
             var newShape = e.overlay; 
             newShape.type = e.type;
-            shape_list.push(newShape);
+            if (newShape.type == 'polygon'){
+                console.log(newShape);
+                shape_list.push(newShape);
+            } else if (newShape.type == 'marker') {
+                marker_list.push(e);
+                if (marker_list.length >2){
+                    marker_list[0].overlay.setMap(null);
+                    marker_list.shift();
+                }
+                if (marker_list.length == 2){
+                    markerLine.setPath([marker_list[0].overlay.getPosition(), marker_list[1].overlay.getPosition()]);
+                }
+            }
+           
+            if((marker_list.length == 2) && (shape_list.length !== 0)){
+                locationQuery();
+            }
+
             
             if (e.type !== google.maps.drawing.OverlayType.MARKER) {
                 // Switch back to non-drawing mode after drawing a shape.
@@ -116,18 +143,7 @@ function finishedLoading(){
                 });
                 setSelection(newShape);
             }
-
-            locationQuery();
-
         });
-        //Only allow 2 markers to be on the map
-        google.maps.event.addListener(drawingManager, 'markercomplete', function (e) {
-            marker_list.push(e);
-            if (marker_list.length >2){
-                marker_list[0].setMap(null);
-                marker_list.shift();
-            }
-        })
         
         // Clear the current selection when the drawing mode is changed, or when the
         // map is clicked.
