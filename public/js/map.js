@@ -1,14 +1,15 @@
-var selectedShape;
-var colorButtons = {};
-var marker_list = [];
-var shape_list = [];
-var containQuery;
-var putLocations;
-var location_list = [];
-var putLocations = function(){};
-var queryKeys = [];
-var markerSet = 0;
-var markerList = [];
+var selectedShape,
+colorButtons = {},
+marker_list = [],
+shape_list = [],
+containQuery,
+putLocations,
+location_list = [],
+putLocations = function(){},
+queryKeys = [],
+markerSet = 0,
+markerList = [],
+markerLine;
 
 function clearSelection () {
     if (selectedShape) {
@@ -62,7 +63,7 @@ function loadedMap(){
             editable: true,
             draggable: true
         };
-        var markerLine = new google.maps.Polyline({
+        markerLine = new google.maps.Polyline({
             strokeColor: 'red',
             strokeOpacity: 0.5,
             strokeWeight: 3,
@@ -126,6 +127,8 @@ function loadedMap(){
                 }
                 if (marker_list.length == 2)
                     markerLine.setPath([marker_list[0].overlay.getPosition(), marker_list[1].overlay.getPosition()]);
+                console.log(markerLine);
+                console.log(marker_list);
             }
 
             // Start Query: if we have the line and polygons set up, we need to proceed with processing the query
