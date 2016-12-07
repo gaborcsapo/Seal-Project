@@ -116,7 +116,6 @@ function loadedMap(){
             var newShape = e.overlay; 
             newShape.type = e.type;
             if (newShape.type == 'polygon'){
-                console.log(newShape);
                 shape_list.push(newShape);
             } else if (newShape.type == 'marker') {
                 //there can be only 2 markers and if there are 2 we should connect them
@@ -127,13 +126,11 @@ function loadedMap(){
                 }
                 if (marker_list.length == 2)
                     markerLine.setPath([marker_list[0].overlay.getPosition(), marker_list[1].overlay.getPosition()]);
-                console.log(markerLine);
-                console.log(marker_list);
             }
 
             // Start Query: if we have the line and polygons set up, we need to proceed with processing the query
             if((marker_list.length == 2) && (shape_list.length !== 0))
-                locationQuery();
+                Query();
 
             // Drawing related
             if (e.type !== google.maps.drawing.OverlayType.MARKER) {
@@ -175,7 +172,7 @@ function loadedMap(){
 
     //LocationQuery: based on the shapes drawn it starts to query the data
     function locationQuery (){
-        promise = new Promise(function (resolve, reject) {
+        return new Promise(function (resolve, reject) {
             queryKeys = [];
             for (var key in sdata) {
                 for (var i=0; i<shape_list.length; i++){
@@ -187,16 +184,13 @@ function loadedMap(){
             }
             return queryKeys;
         });
-        promise.then(makeLocSelection())
     }
 
     function loadedFiles(){
-        putLocations().then(stuff());
-    }
-
-    function stuff(){
-        console.log('Data is on the map');
-        $('#map + .spinner').css('display', 'none');
+        putLocations().then(function(x){
+            console.log('Data is on the map');
+            $('#map + .spinner').css('display', 'none');
+        }());
     }
 
     promiseMap
@@ -219,5 +213,20 @@ function loadedMap(){
     .then(promiseFile9
     .then(function(data){return createDataPoint(data)
     .then(loadedFiles())
-    }))}))}))}))}))}))}))}))}));   
+    }))}))}))}))}))}))}))}))})); 
+
+    function Query(){
+        $('#scatterplot + .spinner + .initial').css('display', 'none');
+        $('#spiral + .spinner + .initial').css('display', 'none');
+        $('#scatterplot + .spinner').css('display', 'block');
+        $('#spiral + .spinner').css('display', 'block');
+        locationQuery().then(
+            makeLocSelection().then(
+                makeTimeSelection().then(
+                    makeDepthSelection().then(
+                        aggregateDays().then(
+                            Spiral.init().then(
+                                Spiral.render().then(
+                                    function(){$('#spiral + .spinner').css('display', 'none');}())))))));
+    }  
 }

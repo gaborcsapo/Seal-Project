@@ -3,69 +3,100 @@ var depthSelection = [];
 var depthSlider;
 var lowerDepth = 0;
 var upperDepth = 100;
+var maxDepth;
 var timeSelection;
 var timeSlider;
-var lowerTime = new Date('2009.01.01');
-var upperTime = new Date('2018.01.01');
+var lowerTime = new Date(2009,1,1,0,0,0,0);
+var upperTime;
+var minTime;
+var maxTime;
 var dateParts;
 
 function makeLocSelection(){
-    locSelection = _.pick(sdata, queryKeys);
-    var max = 0, key;
-    for (key in locSelection) {
-        console.log(typeof locSelection[key].date);
-        dateParts = locSelection[key].date.split('/');
-        locSelection[key].date = new Date(dateParts[2],dateParts[0]-1,dateParts[1]);
-        for (var i = 0; i < locSelection[key].points.length; i++){
-            if (locSelection[key].points[i].depth > max)
-                max = locSelection[key].points[i].depth;
+    return new Promise(function (resolve, reject) {
+        locSelection = _.pick(sdata, queryKeys);
+        var key;
+        maxDepth = 0;
+        if (Object.prototype.toString.call(locSelection[Object.keys(locSelection)[0]].date) !== "[object Date]"){
+            dateParts = locSelection[Object.keys(locSelection)[0]].date.split('/');
+            minTime = new Date(dateParts[2],dateParts[0]-1,dateParts[1]);
+            maxTime = new Date(dateParts[2],dateParts[0]-1,dateParts[1]);
+        } else {
+            minTime = locSelection[Object.keys(locSelection)[0]].date;
+            maxTime = locSelection[Object.keys(locSelection)[0]].date;
         }
-    }
-    depthSlider.slider("option", "max", max);
-    console.log(locSelection)
-    makeTimeSelection();
+        
+        for (key in locSelection) {
+            if (Object.prototype.toString.call(locSelection[key].date) !== "[object Date]"){
+                dateParts = locSelection[key].date.split('/');
+                locSelection[key].date = new Date(dateParts[2],dateParts[0]-1,dateParts[1]);
+            }
+            for (var i = 0; i < locSelection[key].points.length; i++){
+                if (locSelection[key].points[i].depth > maxDepth)
+                    maxDepth = locSelection[key].points[i].depth;
+            }
+            if (locSelection[key].date > maxTime)
+                maxTime = locSelection[key].date;
+            if (locSelection[key].date < minTime)
+                minTime = locSelection[key].date;
+        }
+        if (depthSlider == undefined)
+            initSliders();
+        else {
+            depthSlider.slider("option", "max", maxDepth);
+            timeSlider.slider("option", "max", maxTime.getTime() / 1000);
+            timeSlider.slider("option", "min", minTime.getTime() / 1000);
+        }
+        upperTime = maxTime;
+        lowerTime = minTime;
+        //console.log(locSelection)
+    });
 }
 
 function makeTimeSelection(){
-    queryKeys = [];
-    for (key in locSelection) {
-        if (locSelection[key].date > lowerTime && locSelection[key].date < upperTime)
-            queryKeys.push(key)
-    }
-    timeSelection = _.pick(locSelection, queryKeys);
-    makeDepthSelection()
+    return new Promise(function (resolve, reject) {
+        queryKeys = [];
+        for (key in locSelection) {
+            if (locSelection[key].date > lowerTime && locSelection[key].date < upperTime)
+                queryKeys.push(key);
+        }
+        timeSelection = _.pick(locSelection, queryKeys);
+    });       
 }
 
 function makeDepthSelection(){
-    queryKeys = [];
-    for (key in timeSelection) {
-        for (var i = 0; i < timeSelection[key].points.length; i++){
-            if (timeSelection[key].points[i].depth > lowerDepth && timeSelection[key].points[i].depth < upperDepth)
-                depthSelection.push({
-                    'id': key, 
-                    'date': timeSelection[key].date, 
-                    'x':bdccGeoDistanceToPolyMtrs(markerLine, new google.maps.LatLng(timeSelection[key].loc.lat, timeSelection[key].loc.lng)), 
-                    'depth':timeSelection[key].points[i].depth, 
-                    'sal':timeSelection[key].points[i].sal, 
-                    'temp':timeSelection[key].points[i].temp
-                })
+    return new Promise(function (resolve, reject) {
+        queryKeys = [];
+        depthSelection = [];
+        for (key in timeSelection) {
+            for (var i = 0; i < timeSelection[key].points.length; i++){
+                if (timeSelection[key].points[i].depth > lowerDepth && timeSelection[key].points[i].depth < upperDepth)
+                    depthSelection.push({
+                        'id': key, 
+                        'date': timeSelection[key].date, 
+                        'x':bdccGeoDistanceToPolyMtrs(markerLine, new google.maps.LatLng(timeSelection[key].loc.lat, timeSelection[key].loc.lng)), 
+                        'depth':timeSelection[key].points[i].depth, 
+                        'sal':timeSelection[key].points[i].sal, 
+                        'temp':timeSelection[key].points[i].temp
+                    })
+            }
         }
-    }
-    console.log(depthSelection);
-    aggregateDays();
+        //console.log(depthSelection);
+    });  
 }
 
 function aggregateDays(){
-    circleData = {};
-    for (var i = 0; i < depthSelection.length; i++) {
-        if (_.has(circleData, depthSelection[i].date.getTime()/1000)){
-            circleData[depthSelection[i].date.getTime()/1000].push(depthSelection[i]);
-        } else {
-            circleData[depthSelection[i].date.getTime()/1000] = [depthSelection[i]];
+    return new Promise(function (resolve, reject) {
+        circleData = {};
+        for (var i = 0; i < depthSelection.length; i++) {
+            if (_.has(circleData, depthSelection[i].date.getTime()/1000)){
+                circleData[depthSelection[i].date.getTime()/1000].push(depthSelection[i]);
+            } else {
+                circleData[depthSelection[i].date.getTime()/1000] = [depthSelection[i]];
+            }
         }
-    }
-    console.log(circleData);
-    Spiral.init();
+        //console.log(circleData);
+    });
 }
 
 function daysBetween(date1, date2) {
@@ -76,57 +107,40 @@ function daysBetween(date1, date2) {
     return Math.round(difference_ms/ONE_DAY)
 }
 
-function yearsBetween(dateold, datenew) {
-    var ynew = datenew.getFullYear();
-    var mnew = datenew.getMonth();
-    var dnew = datenew.getDate();
-    var yold = dateold.getFullYear();
-    var mold = dateold.getMonth();
-    var dold = dateold.getDate();
-    var diff = ynew - yold;
-    if (mold > mnew) diff--;
-    else {
-        if (mold == mnew) {
-            if (dold > dnew) diff--;
-        }
-    }
-    return diff;
+function initSliders(){
+    $(function() {
+        depthSlider = $( "#depth-slider" ).slider({
+            range: true,
+            min: 0,
+            max: maxDepth,
+            values: [ 10, 30 ],
+            slide: function( event, ui ) {
+                lowerDepth = (ui.values[ 0 ]);
+                upperDepth = (ui.values[ 1 ]);
+                $( "#depthamount" ).val( ((ui.values[ 0 ]).toString() ) + " - " + ((ui.values[ 1 ]).toString() ) );
+            },
+            //change: function( event, ui ) {makeDepthSelection(ui)}
+        });
+        $( "#depthamount" ).val( ($( "#depth-slider" ).slider( "values", 0 )) +
+        " - " + ($( "#depth-slider" ).slider( "values", 1 )));
+    });
+    $(function() {
+        timeSlider = $( "#time-slider" ).slider({
+            range: true,
+            min: minTime.getTime() / 1000,
+            max: maxTime.getTime() / 1000,
+            step: 86400,
+            values: [ lowerTime.getTime() / 1000, upperTime.getTime() / 1000 ],
+            slide: function( event, ui ) {
+                lowerTime = new Date(ui.values[ 0 ] *1000);
+                upperTime = new Date(ui.values[ 1 ] *1000);
+                $( "#timeamount" ).val( (new Date(ui.values[ 0 ] *1000).toDateString() ) + " - " + (new Date(ui.values[ 1 ] *1000)).toDateString() );
+            }
+        });
+        $( "#timeamount" ).val( (new Date($( "#time-slider" ).slider( "values", 0 )*1000).toDateString()) +
+        " - " + (new Date($( "#time-slider" ).slider( "values", 1 )*1000)).toDateString());
+    });
 }
-
-$(document).ready(function(){
-  $(function() {
-    depthSlider = $( "#depth-slider" ).slider({
-      range: true,
-      min: 0,
-      max: 60,
-      values: [ 10, 30 ],
-      slide: function( event, ui ) {
-        lowerDepth = (ui.values[ 0 ]);
-        upperDepth = (ui.values[ 1 ]);
-        $( "#depthamount" ).val( ((ui.values[ 0 ]).toString() ) + " - " + ((ui.values[ 1 ]).toString() ) );
-      },
-      change: function( event, ui ) {makeDepthSelection(ui)}
-    });
-    $( "#depthamount" ).val( ($( "#depth-slider" ).slider( "values", 0 )) +
-      " - " + ($( "#depth-slider" ).slider( "values", 1 )));
-  });
-  $(function() {
-    timeSlider = $( "#time-slider" ).slider({
-      range: true,
-      min: new Date('2010.01.01').getTime() / 1000,
-      max: new Date('2016.01.01').getTime() / 1000,
-      step: 86400,
-      values: [ new Date('2011.01.01').getTime() / 1000, new Date('2013.02.01').getTime() / 1000 ],
-      slide: function( event, ui ) {
-          lowerTime = new Date(ui.values[ 0 ] *1000);
-          upperTime = new Date(ui.values[ 1 ] *1000);
-          $( "#timeamount" ).val( (new Date(ui.values[ 0 ] *1000).toDateString() ) + " - " + (new Date(ui.values[ 1 ] *1000)).toDateString() );
-      }
-    });
-    $( "#timeamount" ).val( (new Date($( "#time-slider" ).slider( "values", 0 )*1000).toDateString()) +
-      " - " + (new Date($( "#time-slider" ).slider( "values", 1 )*1000)).toDateString());
-  });
-})
   
 
 
