@@ -14,7 +14,7 @@ var Spiral = (function(window,d3){
     
     donutThickness = 20,
     donutDistance = 20,
-    periods = 6,
+    periods = 8,
     elementsPerPeriod = 365,
     baseRadius = 100,
     radius = baseRadius,
@@ -42,21 +42,20 @@ var Spiral = (function(window,d3){
     svgContainer = d3.select("#spiral").append("svg"),
     spiralLine,
     spiralName,
+    monthCont,
     monthTicks,
     monthBaseLine,
     monthNameSvg,
     months = ['Dec','Jan','Feb','Mar','Apr','May','June','July','Aug','Sept','Oct','Nov','kru'];
     colorList = ['red','blue','green', 'yellow'],
-    periodNames = [{name:'2010',pos:null},{name:'2011',pos:null},{name:'2012',pos:null},{name:'2013',pos:null},{name:'2014',pos:null},{name:'2015',pos:null}],
+    periodNames = [],
     periodNameSVG = null;
-     
-    $(document).ready(function(){
-      initSpiral();
-    })
 
     function initSpiral(){   
       angle = 0; 
-      //Calculate spiral polygon element positions
+      periods = yearsBetween(lowerTime, upperTime);
+      console.log(periods)
+
       for (var index = 0; index < elementsPerPeriod*periods; index++) {
         radius += ((donutThickness+donutDistance)/365);
         angle += 2*Math.PI/365;
@@ -71,8 +70,7 @@ var Spiral = (function(window,d3){
         Dy = Ay;
         Dx = Ax;
       }
-      
-      //calcualte the position of ticks and month labels
+
       Cy = (baseRadius - 5) * Math.sin(2*Math.PI/12*11);
       Cx = (baseRadius - 5) * Math.cos(2*Math.PI/12*11);
       cy = (radius + donutThickness + 30) * Math.sin(2*Math.PI/12*11);
@@ -97,7 +95,9 @@ var Spiral = (function(window,d3){
       } 
       
       for (var periodIndex = 0; periodIndex < periods; periodIndex++) {
-        periodNames[periodIndex].pos = baseRadius + donutThickness + periodIndex*(donutThickness + donutDistance) + donutDistance/3; 
+        periodNames.push({'name':(parseInt(lowerTime.getFullYear())+parseInt(periodIndex)).toString(), 
+                          'pos':baseRadius + donutThickness + periodIndex*(donutThickness + donutDistance) + donutDistance/3
+     	                    });
       }
 
       xScale = d3.scale.linear().domain([d3.min(spiralElemPos, function(d) {return d.p[1].x - padding;}), d3.max(spiralElemPos, function(d) {return d.p[1].x + padding;})]);
@@ -106,87 +106,94 @@ var Spiral = (function(window,d3){
         .x(function(d) { return xScale(d.x); })
         .y(function(d) { return yScale(d.y); });
 
-      //add stuff for legend and later just update 
+      //add stuff for legend and later just update
+      spiralCont = svgContainer.append('g').attr('id','spiralCont');
+      monthCont = svgContainer.append('g').attr('id','monthCont');
       spiralName = svgContainer.append("text")
         .attr("text-anchor", "middle")
         .text("Temperature");
-
-      spiralLine = svgContainer.append('g').attr('id','spiralLine').selectAll('polygon')
-        .data(spiralElemPos)
-        .enter().append("polygon") 
-        .attr("fill", function(d){return d.c;})
-        .attr("stroke", function(d){return d.c;});
-      
-      periodNameSVG = svgContainer.append("g").attr('id','periodNameSVG').selectAll('text')
-        .data(periodNames)
-        .enter()
-        .append('text')
-        .attr("transform", "rotate(90)")
-        .attr("text-anchor", "middle")
-        .text(function(d){return d.name;});
-      
-      monthTicks = svgContainer.append('g').attr('id','monthTick').selectAll(".monthLine")
-        .data(monthTickPos)
-        .enter().append("path")
-        .attr("class","monthLine");
-      
-      monthBaseLine = svgContainer.append('g').attr('id','monthBaseLine').selectAll(".arc")
-        .data(monthPos)
-        .enter().append("path")
-        .attr("class","arc")
-        .attr("id", function(d,i) { return "monthArc_"+i; });
-      
-      monthNameSvg = svgContainer.append('g').attr('id','monthNameSVG').selectAll(".name")
-      .data(monthPos)
-      .enter()
-      .append("text")     
-      .attr("class", "donutText")
-      .append("textPath")
-      .attr("xlink:href",function(d,i){return "#monthArc_"+(i);})
-      .text(function(d, i){return months[Math.floor(i/2)];})	
-      .style("text-anchor","middle") 
-      .attr("startOffset", "50%")		
 
       window.addEventListener('resize', Spiral.render);
       render();
     }
 
-    function render(){      
+    function render(){
       width = parseInt(d3.select("#spiral").style("width"));
       svgContainer.attr("width", width).attr("height", width);
       xScale.range([0,width]);
       yScale.range([0,width]);
-      
-      svgContainer.selectAll("polygon").each(function(d, i) {
-          d3.select(this).attr("points",function(d) { 
-            return d.p.map(function(d) {
-                return [xScale(d.x),yScale(d.y)].join(",");}
-            ).join(" ");
-        })
-      });
-      
-      svgContainer.selectAll(".monthLine").each(function(d, i) {
-          d3.select(this).attr("d", lineFunction);
-      });
-      
-      svgContainer.selectAll(".arc").each(function(d, i) {
-          d3.select(this).attr("d", lineFunction)
-      });
-
-      monthNameSvg.selectAll("textpath").each(function(d, i) {
-          d3.select(this).attr("d", lineFunction)
-      });
-
-      periodNameSVG.each(function(d, i) {
-          d3.select(this)
-          .attr("transform", 'translate(' + xScale(d.pos) + ',' +yScale(0) + ')rotate(90)')
-      });
 
       spiralName.attr("x", width/2)
-        .attr("y", width/2);
+      .attr("y", width/2);
+
+      spiralLine = spiralCont.selectAll('polygon')
+      .data(depthSelection)
+      .attr("fill", function(d){return 'red';})
+      .attr("stroke", function(d){return 'red';})
+
+      spiralLine.enter()
+      .append('polygon')
+      .attr("fill", function(d){return 'red';})
+      .attr("stroke", function(d){return 'red';})
+      .attr("points",function(d) { 
+            var x = spiralElemPos[daysBetween(d.date, lowerTime)];
+            if (x == undefined)
+              console.log(daysBetween(d.date, lowerTime), spiralElemPos.length);
+            return x.p.map(function(d) {
+                return [xScale(d.x),yScale(d.y)].join(",");}
+            ).join(" ");
+      })
+      
+      spiralLine.exit().remove();
+
+
+
+      monthBaseLine = monthCont.selectAll(".arc")
+        .data(monthPos)
+        .attr("id", function(d,i) {return "monthArc_"+i; })
+        .attr("d", lineFunction);
+      monthBaseLine.enter()
+        .append("path")
+        .attr("class","arc")
+        .attr("id", function(d,i) {return "monthArc_"+i; })
+        .attr("d", lineFunction);
+      monthBaseLine.exit().remove();
+      
+      monthNameSvg = monthCont.selectAll(".name")
+        .data(monthPos)
+      monthNameSvg.enter()
+        .append("text")     
+        .attr("class", "donutText")
+        .append("textPath")
+        .attr("xlink:href",function(d,i){return "#monthArc_"+(i);})
+        .text(function(d, i){return months[Math.floor(i/2)];})	
+        .style("text-anchor","middle") 
+        .attr("startOffset", "50%");
+      monthNameSvg.exit().remove();	
+
+      monthTicks = monthCont.selectAll(".monthLine")
+        .data(monthTickPos);
+      monthTicks.enter()
+        .append("path")
+        .attr("class","monthLine")
+        .attr("d", lineFunction);
+      monthTicks.exit().remove();
+
+      console.log(periodNames);
+      periodNameSVG = monthCont.selectAll('.period')
+        .data(periodNames);
+      periodNameSVG.enter()
+        .append('text')
+        .attr("class","period")
+        .attr("transform", "rotate(90)")
+        .attr("text-anchor", "middle")
+        .text(function(d){return d.name;})
+        .attr("transform", function(d){console.log(xScale(d.pos));return 'translate(' + xScale(d.pos) + ',' +yScale(0) + ')rotate(90)';});
+      periodNameSVG.exit().remove();
     }
     
     return {
-      render : render
+      render : render,
+      init : initSpiral
     }
   })(window,d3);

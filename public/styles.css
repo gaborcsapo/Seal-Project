@@ -60,3 +60,44 @@ circle {
     stroke-width: 0;
 
 }
+
+/*Spinner loading animation*/
+.overlay {
+    padding: 0!important;
+    position: relative;
+}
+
+.spinner {
+    display:none;
+    position:absolute;
+    background-color: lightgray;
+    opacity: 0.5;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+}
+
+#map + .spinner{
+    display:block;
+}
+
+@keyframes spinner {
+  to {transform: rotate(360deg);}
+}
+ 
+.spinner:before {
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin-top: -10px;
+  margin-left: -10px;
+  border-radius: 50%;
+  border: 2px solid gray;
+  border-top-color: black;
+  animation: spinner .6s linear infinite;
+}

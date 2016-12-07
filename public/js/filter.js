@@ -13,9 +13,12 @@ function makeLocSelection(){
     locSelection = _.pick(sdata, queryKeys);
     var max = 0, key;
     for (key in locSelection) {
+        console.log(typeof locSelection[key].date);
+        dateParts = locSelection[key].date.split('/');
+        locSelection[key].date = new Date(dateParts[2],dateParts[0]-1,dateParts[1]);
         for (var i = 0; i < locSelection[key].points.length; i++){
             if (locSelection[key].points[i].depth > max)
-                max = locSelection[key].points[i].depth
+                max = locSelection[key].points[i].depth;
         }
     }
     depthSlider.slider("option", "max", max);
@@ -26,9 +29,7 @@ function makeLocSelection(){
 function makeTimeSelection(){
     queryKeys = [];
     for (key in locSelection) {
-        dateParts = locSelection[key].date.split('/');
-        if (new Date(dateParts[2],dateParts[0]-1,dateParts[1]) > lowerTime && new Date(dateParts[2],dateParts[0]-1,dateParts[1]) < upperTime)
-            locSelection[key].date = new Date(dateParts[2],dateParts[0]-1,dateParts[1]);
+        if (locSelection[key].date > lowerTime && locSelection[key].date < upperTime)
             queryKeys.push(key)
     }
     timeSelection = _.pick(locSelection, queryKeys);
@@ -64,6 +65,32 @@ function aggregateDays(){
         }
     }
     console.log(circleData);
+    Spiral.init();
+}
+
+function daysBetween(date1, date2) {
+    var ONE_DAY = 1000 * 60 * 60 * 24
+    var date1_ms = date1.getTime()
+    var date2_ms = date2.getTime()
+    var difference_ms = Math.abs(date1_ms - date2_ms)
+    return Math.round(difference_ms/ONE_DAY)
+}
+
+function yearsBetween(dateold, datenew) {
+    var ynew = datenew.getFullYear();
+    var mnew = datenew.getMonth();
+    var dnew = datenew.getDate();
+    var yold = dateold.getFullYear();
+    var mold = dateold.getMonth();
+    var dold = dateold.getDate();
+    var diff = ynew - yold;
+    if (mold > mnew) diff--;
+    else {
+        if (mold == mnew) {
+            if (dold > dnew) diff--;
+        }
+    }
+    return diff;
 }
 
 $(document).ready(function(){

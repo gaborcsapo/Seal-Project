@@ -45,6 +45,7 @@
                   Filters
                 </div>
                 <div id="filters" class="card-block">
+                  <p class="initial">Please select an area on the map...</p>
                   <!--Filters-->
                   <div id="depth-slider"></div>
                   <p>
@@ -67,6 +68,7 @@
                   Individual figure
                 </div>
                 <div id="individual" class="card-block">
+                  <p class="initial">Click on a point to see its details...</p>
                   <!--Individual figure-->
                 </div>
               </div>
@@ -82,9 +84,10 @@
               Filter by area
               <button id="delete-button" class="btn btn-secondary text-muted" style="float:right;padding-top:0; padding-bottom:0">Delete Selected Shape</button>
             </div>
-            <div class="card-block" style="padding:0;">
+            <div class="overlay card-block">
               <!--Map-->
               <div id="map"></div>
+              <div class="spinner"></div>
             </div>
           </div>
         </div>
@@ -95,10 +98,11 @@
               <i class="fa fa-crop" aria-hidden="true" ></i>
               Aggregated cross-section
             </div>
-            <div class="card-block">
-              scatterplot
+            <div class="overlay card-block">
+              <p class="initial">Please select an area on the map</p>
               <!--Scatterplot code comes here-->
               <div id="scatterplot"></div>
+              <div class="spinner"></div>
             </div>
           </div>
         </div>
@@ -109,9 +113,11 @@
               <i class="fa fa-calendar" aria-hidden="true" ></i>
               Change over the years
             </div>
-            <div class="card-block">
+            <div class="overlay card-block">
+              <p class="initial">Please select an area on the map...</p>
               <!--Spiral graph code code comes here-->
               <div id="spiral"></div>
+              <div class="spinner"></div>
             </div>
           </div>
         </div>
@@ -128,7 +134,7 @@
     <script src="/js/map.js"></script>
     <!--<script src="/js/scatterplot.js"></script>-->
     <script src="/js/filter.js"></script>
-    <script src="/js/circles.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCc7TMHgBxMhHtmQvnJb4bNyTDxYaWcNnA&libraries=geometry,drawing&callback=finishedLoading" async defer></script>
+    <script src="/js/circles2.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCc7TMHgBxMhHtmQvnJb4bNyTDxYaWcNnA&libraries=geometry,drawing&callback=loadedMap" async defer></script>
   </body>
 </html>
