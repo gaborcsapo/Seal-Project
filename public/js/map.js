@@ -221,12 +221,17 @@ function loadedMap(){
         $('#scatterplot + .spinner').css('display', 'block');
         $('#spiral + .spinner').css('display', 'block');
         locationQuery().then(
-            makeLocSelection().then(
-                makeTimeSelection().then(
-                    makeDepthSelection().then(
-                        aggregateDays().then(
-                            Spiral.init().then(
-                                Spiral.render().then(
-                                    function(){$('#spiral + .spinner').css('display', 'none');}())))))));
+        makeLocSelection().then(
+        makeTimeSelection().then(
+        makeDepthSelection().then(
+        aggregateDays().then(
+        Spiral.init().then(
+        Spiral.render().then(
+        ScatterPlot.init().then(
+        ScatterPlot.render().then(
+        function(){
+            $('#spiral + .spinner').css('display', 'none');
+            $('#scatterplot + .spinner').css('display', 'none');
+        }())))))))));
     }  
 }

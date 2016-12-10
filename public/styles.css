@@ -47,13 +47,26 @@ circle {
   stroke-width: 1.5px;
 }
 
+/* Scatter Plot */
+#scatterplot text {
+    font-size: .05 em;
+}
+ 
+#scatterplot .axis path,
+#scatterplot .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
 
 /*SPIRAL GRAPH*/
-#spiral{
+#spiral1{
     font-size: 0.55em;
     font-family: 'Arial';
     stroke-width: 1;
     stroke: gray;
+    width: 50%;
 }
 
 #spiral .arc{

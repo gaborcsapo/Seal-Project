@@ -2,6 +2,7 @@ var Spiral = (function(window,d3){
     var margin = 20,
     padding = 70,
     spiralElemPos = [],
+    spiralSkelettonPos = [],
     monthTickPos = [],
     monthPos = [],  
     donutThickness,
@@ -38,32 +39,22 @@ var Spiral = (function(window,d3){
 
     xScale,
     yScale,
+    colorScale,
     lineFunction,
+    skelettonFunction,
     strokewidth,
     svgContainer = d3.select("#spiral").append("svg"),
+    spiralSkeletton,
     spiralLine,
+    spiralColor,
     spiralName,
     monthCont,
     monthTicks,
     monthBaseLine,
     monthNameSvg,
-    months = ['Dec','Jan','Feb','Mar','Apr','May','June','July','Aug','Sept','Oct','Nov','kru'];
-    colorList = ['red','blue','green', 'yellow'],
+    months = ['Dec','Jan','Feb','Mar','Apr','May','June','July','Aug','Sept','Oct','Nov'];
     periodNames = [],
     periodNameSVG = null;
-    
-    $(document).ready(function(){
-        //add stuff for legend and later just update
-        spiralCont = svgContainer.append('g').attr('id','spiralCont');
-        monthCont = svgContainer.append('g').attr('id','monthCont');
-        spiralName = svgContainer.append("text")
-          .attr("text-anchor", "middle")
-          .text("Temperature");
-        
-        xScale = d3.scale.linear();
-        yScale = d3.scale.linear();
-        window.addEventListener('resize', Spiral.render().then(function(){$('#spiral + .spinner').css('display', 'none');}()));
-    }); 
 
     function calcSpiral(){  
       return new Promise(function (resolve, reject) {
@@ -76,6 +67,7 @@ var Spiral = (function(window,d3){
         monthTickPos = [];
         monthPos = []; 
         periodNames = [];
+        spiralSkelettonPos = [[]];
 
         for (var index = 0; index < elementsPerPeriod*periods; index++) {
           radius += ((donutThickness+donutDistance)/elementsPerPeriod);
@@ -84,8 +76,8 @@ var Spiral = (function(window,d3){
           Ax = radius * Math.cos(angle);
           By = (radius + donutThickness) * Math.sin(angle);
           Bx = (radius + donutThickness) * Math.cos(angle);
-          spiralElemPos.push({'p':[{'x':Ax,'y':Ay},{'x':Bx,'y':By},{'x':Cx,'y':Cy},{'x':Dx,'y':Dy},], 'c': (colorList[Math.ceil(index/elementsPerPeriod)])});
-          
+          spiralElemPos.push({'p':[{'x':Ax,'y':Ay},{'x':Bx,'y':By},{'x':Cx,'y':Cy},{'x':Dx,'y':Dy}]});
+          spiralSkelettonPos[0].push({'x':Bx,'y':By});
           Cy = By;
           Cx = Bx;
           Dy = Ay;
@@ -115,22 +107,25 @@ var Spiral = (function(window,d3){
           cx = bx;
           cy = by;
         } 
-        console.log(monthTickPos);
         
         for (var periodIndex = 0; periodIndex < periods; periodIndex++) {
           periodNames.push({'name':(parseInt(lowerTime.getFullYear())+parseInt(periodIndex)).toString(), 
                             'pos':baseRadius + donutThickness + periodIndex*(donutThickness + donutDistance) + donutDistance/3
                             });
         }
-
+        
+        colorScale.domain([d3.min(circleData, function(d) {return d.temp/d.counter;}), d3.max(circleData, function(d) {return d.temp/d.counter;})]).range(["red", "green", "blue"]);
         xScale.domain([d3.min(spiralElemPos, function(d) {return d.p[1].x - padding;}), d3.max(spiralElemPos, function(d) {return d.p[1].x + padding;})]);
         yScale.domain([d3.min(spiralElemPos, function(d) {return d.p[1].y - padding;}), d3.max(spiralElemPos, function(d) {return d.p[1].y + padding;})]);
         lineFunction = d3.svg.line()
           .x(function(d) { return xScale(d.x); })
           .y(function(d) { return yScale(d.y); });
-
-        });   
-      
+        skelettonFunction = d3.svg.line()
+          .x(function(d) { return xScale(d.x); })
+          .y(function(d) { return yScale(d.y); });
+        window.addEventListener('resize', Spiral.render().then(function(){$('#spiral + .spinner').css('display', 'none');}()));
+    
+      });      
     }
 
     function render(){
@@ -144,16 +139,23 @@ var Spiral = (function(window,d3){
 
         spiralName.attr("x", width/2)
         .attr("y", width/2);
-
+        
         spiralLine = spiralCont.selectAll('polygon')
-        .data(depthSelection)
-        .attr("fill", function(d){return 'red';})
-        .attr("stroke", function(d){return 'red';})
-
+        .data(circleData)
+        .attr("fill", function(d){return colorScale(d.temp/d.counter);})
+        .attr("stroke", function(d){return colorScale(d.temp/d.counter);})
+        .attr("points",function(d) {
+              var x = spiralElemPos[daysBetween(d.date, spiralStartDate)];
+              if (x == undefined)
+                console.log(daysBetween(d.date, spiralStartDate), spiralElemPos.length);
+              return x.p.map(function(d) {
+                  return [xScale(d.x),yScale(d.y)].join(",");}
+              ).join(" ");
+        })     
         spiralLine.enter()
         .append('polygon')
-        .attr("fill", function(d){return 'red';})
-        .attr("stroke", function(d){return 'red';})
+        .attr("fill", function(d){return colorScale(d.temp/d.counter);})
+        .attr("stroke", function(d){console.log(colorScale(d.temp/d.counter));return colorScale(d.temp/d.counter);})
         .attr("points",function(d) {
               var x = spiralElemPos[daysBetween(d.date, spiralStartDate)];
               if (x == undefined)
@@ -162,8 +164,19 @@ var Spiral = (function(window,d3){
                   return [xScale(d.x),yScale(d.y)].join(",");}
               ).join(" ");
         })
-        
         spiralLine.exit().remove();
+
+        spiralSkeletton = spiralCont.selectAll('.skeletton') 
+        .data(spiralSkelettonPos)
+        .attr('d', function(d){return skelettonFunction(d)});
+        spiralSkeletton.enter()
+        .append('path')
+        .attr('class', 'skeletton')
+        .attr('d', function(d){return skelettonFunction(d)})
+        .attr("stroke", "gray")
+        .attr("fill", "none")
+        .attr("stroke-width", '1px')
+        spiralSkeletton.exit().remove();
 
         monthBaseLine = monthCont.selectAll(".arc")
           .data(monthPos)
@@ -208,6 +221,20 @@ var Spiral = (function(window,d3){
         periodNameSVG.exit().remove();
       });      
     }
+
+    $(document).ready(function(){
+        //add stuff for legend and later just update
+        spiralCont = svgContainer.append('g').attr('id','spiralCont');
+        monthCont = svgContainer.append('g').attr('id','monthCont');
+        spiralName = svgContainer.append("text")
+          .attr("text-anchor", "middle")
+          .text("Temperature");
+        
+        xScale = d3.scale.linear();
+        yScale = d3.scale.linear();
+        colorScale = d3.scale.linear();
+        window.addEventListener('resize', Spiral.render().then(function(){$('#spiral + .spinner').css('display', 'none');}()));
+    }); 
     
     return {
       render : render,

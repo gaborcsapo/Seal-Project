@@ -11,6 +11,7 @@ var upperTime;
 var minTime;
 var maxTime;
 var dateParts;
+var circleData = {};
 
 function makeLocSelection(){
     return new Promise(function (resolve, reject) {
@@ -87,15 +88,21 @@ function makeDepthSelection(){
 
 function aggregateDays(){
     return new Promise(function (resolve, reject) {
-        circleData = {};
+        tempCircleData = {};
         for (var i = 0; i < depthSelection.length; i++) {
-            if (_.has(circleData, depthSelection[i].date.getTime()/1000)){
-                circleData[depthSelection[i].date.getTime()/1000].push(depthSelection[i]);
+            if (_.has(tempCircleData, depthSelection[i].date.getTime()/1000)){
+                tempCircleData[depthSelection[i].date.getTime()/1000].counter++;
+                tempCircleData[depthSelection[i].date.getTime()/1000].temp += depthSelection[i].temp;
+                tempCircleData[depthSelection[i].date.getTime()/1000].temp += depthSelection[i].sal;
             } else {
-                circleData[depthSelection[i].date.getTime()/1000] = [depthSelection[i]];
+                tempCircleData[depthSelection[i].date.getTime()/1000] = {'date': depthSelection[i].date, 'counter':1, 'sal': depthSelection[i].sal, 'temp': depthSelection[i].temp};
             }
         }
-        //console.log(circleData);
+        circleData = $.map(tempCircleData, function(value, index) {
+            return [value];
+        });
+        console.log(circleData);
+        
     });
 }
 
