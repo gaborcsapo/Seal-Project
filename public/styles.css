@@ -24,7 +24,7 @@ circle {
   max-height: 600px;
 }
 
-#individual path { 
+#individual path {
     stroke: steelblue;
     fill: none;
 }
@@ -49,9 +49,17 @@ circle {
 
 /* Scatter Plot */
 #scatterplot text {
-    font-size: .05 em;
+    font-size: .9em;
 }
- 
+
+#scatterplot .legend text {
+    font-size: .6em;
+}
+
+#scatterplot .salLegend text {
+    font-size: .6em;
+}
+
 #scatterplot .axis path,
 #scatterplot .axis line {
     fill: none;
@@ -98,7 +106,7 @@ circle {
 @keyframes spinner {
   to {transform: rotate(360deg);}
 }
- 
+
 .spinner:before {
   content: '';
   box-sizing: border-box;
