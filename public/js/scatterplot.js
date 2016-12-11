@@ -6,7 +6,6 @@ var ScatterPlot = (function(window,d3) {
     width,
     height,
     svgContainer,
-    // svgContainer = d3.select("#scatterplot").append("svg"),
     data,
     xValue,
     xScale,
@@ -54,14 +53,6 @@ var ScatterPlot = (function(window,d3) {
             tMap = function(d) { return tScale(temp(d));};
 
 
-            // Adding stuff from render
-
-
-
-            // Done adding stuff from render
-
-
-
             window.addEventListener('resize', ScatterPlot.render);
         });
     }
@@ -100,21 +91,12 @@ var ScatterPlot = (function(window,d3) {
             xAxis = d3.svg.axis().scale(xScale).orient("bottom");
             yAxis = d3.svg.axis().scale(yScale).orient("left");
 
-            // Data
+            // Data Format
             // depth: 10
             // id: "11"
             // sal: 30.4436
             // temp: 3.2769
             // x: 1349.2694
-
-            // //Working logs
-            // console.log(d3.min(data, function(d) {
-            //     return d["depth"];
-            // }));
-            //
-            // console.log(d3.max(data, function(d) {
-            //     return d["depth"];
-            // }));
 
 
             //Enter data and draw dots
@@ -131,12 +113,12 @@ var ScatterPlot = (function(window,d3) {
 
             svgContainer.append("g")
             .attr("class", "x axis")
-            .attr("transform", "translate("+(margin.ylabel-rMax)+"," + (height - margin.bottom - margin.xlabel)+ ")")
+            .attr("transform", "translate("+(0)+"," + (height - margin.bottom - margin.xlabel)+ ")")
             .call(xAxis);
 
             svgContainer.append("g")
             .attr("class", "y axis")
-            .attr("transform", "translate(" + 6 + 0 + ", "+rMax+")")
+            .attr("transform", "translate("+60+ ", "+0+")")
             .call(yAxis);
 
             depthLabel.attr("transform", "translate("+margin.ylabel+","+(height/2)+")rotate(-90)");
@@ -186,8 +168,6 @@ var ScatterPlot = (function(window,d3) {
                 .attr("dy", ".2em")
                 .style("text-anchor", "start")
                 .text(function(d) { return (d + " sal");})
-
-
 
         });
     }
