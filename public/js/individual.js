@@ -61,9 +61,11 @@ var Chart = (function(window,d3) {
 
     temperature =  svg.append("text")
             .attr("text-anchor", "middle")
+            .attr("fill", "blue")  
             .text("Temperature");
     salinity = svg.append("text")
-            .attr("text-anchor", "middle")  
+            .attr("text-anchor", "middle")
+            .attr("fill", "red")  
             .text("Salinity");
     depth = svg.append("text")
             .attr("text-anchor", "middle")
@@ -78,8 +80,9 @@ var Chart = (function(window,d3) {
       //if the size is smaller than the breakpoint, we decrease the left margin to give more space
       margin.left = parseInt(d3.select("#individual").style("width")) < breakPoint ? 5 : 40;
       width = parseInt(d3.select("#individual").style("width")) - margin.right - margin.left;
-      if (width>125)
-        width = 125;
+      if (width>100)
+        width = 100;
+      
       height = width;
       //max height is 600
       if (height > (600-margin.left-margin.right))
