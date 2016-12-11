@@ -225,13 +225,15 @@ function loadedMap(){
         makeTimeSelection().then(
         makeDepthSelection().then(
         aggregateDays().then(
-        Spiral.init().then(
-        Spiral.render().then(
+        tempSpiral.init().then(
+        tempSpiral.render().then(
+        salSpiral.init().then(
+        salSpiral.render().then(
         ScatterPlot.init().then(
         ScatterPlot.render().then(
         function(){
             $('#spiral + .spinner').css('display', 'none');
             $('#scatterplot + .spinner').css('display', 'none');
-        }())))))))));
+        }())))))))))));
     }  
 }

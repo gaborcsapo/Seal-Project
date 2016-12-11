@@ -115,6 +115,7 @@ function daysBetween(date1, date2) {
 }
 
 function initSliders(){
+    $('#filters > .initial').css('display', 'none');
     $(function() {
         depthSlider = $( "#depth-slider" ).slider({
             range: true,
@@ -124,12 +125,24 @@ function initSliders(){
             slide: function( event, ui ) {
                 lowerDepth = (ui.values[ 0 ]);
                 upperDepth = (ui.values[ 1 ]);
-                $( "#depthamount" ).val( ((ui.values[ 0 ]).toString() ) + " - " + ((ui.values[ 1 ]).toString() ) );
+                $( "#depthamount" ).html("Depth range: " + ((ui.values[ 0 ]).toString() ) + " - " + ((ui.values[ 1 ]).toString() ) + "m" );
             },
-            //change: function( event, ui ) {makeDepthSelection(ui)}
+            change: function( event, ui ) {
+                makeDepthSelection().then(
+                aggregateDays().then(
+                tempSpiral.init().then(
+                tempSpiral.render().then(
+                salSpiral.init().then(
+                salSpiral.render().then(
+                ScatterPlot.init().then(
+                ScatterPlot.render().then(
+                function(){
+                    $('#spiral + .spinner').css('display', 'none');
+                    $('#scatterplot + .spinner').css('display', 'none');
+                }()))))))));}
         });
-        $( "#depthamount" ).val( ($( "#depth-slider" ).slider( "values", 0 )) +
-        " - " + ($( "#depth-slider" ).slider( "values", 1 )));
+        $( "#depthamount" ).html("Depth range: " +  ($( "#depth-slider" ).slider( "values", 0 )) +
+        " - " + ($( "#depth-slider" ).slider( "values", 1 )) + "m");
     });
     $(function() {
         timeSlider = $( "#time-slider" ).slider({
@@ -141,10 +154,24 @@ function initSliders(){
             slide: function( event, ui ) {
                 lowerTime = new Date(ui.values[ 0 ] *1000);
                 upperTime = new Date(ui.values[ 1 ] *1000);
-                $( "#timeamount" ).val( (new Date(ui.values[ 0 ] *1000).toDateString() ) + " - " + (new Date(ui.values[ 1 ] *1000)).toDateString() );
-            }
+                $( "#timeamount" ).html( (new Date(ui.values[ 0 ] *1000).toDateString() ) + " - " + (new Date(ui.values[ 1 ] *1000)).toDateString() );
+            },
+            change: function( event, ui ) {
+                makeTimeSelection().then(
+                makeDepthSelection().then(
+                aggregateDays().then(
+                tempSpiral.init().then(
+                tempSpiral.render().then(
+                salSpiral.init().then(
+                salSpiral.render().then(
+                ScatterPlot.init().then(
+                ScatterPlot.render().then(
+                function(){
+                    $('#spiral + .spinner').css('display', 'none');
+                    $('#scatterplot + .spinner').css('display', 'none');
+                }())))))))));}
         });
-        $( "#timeamount" ).val( (new Date($( "#time-slider" ).slider( "values", 0 )*1000).toDateString()) +
+        $( "#timeamount" ).html((new Date($( "#time-slider" ).slider( "values", 0 )*1000).toDateString()) +
         " - " + (new Date($( "#time-slider" ).slider( "values", 1 )*1000)).toDateString());
     });
 }

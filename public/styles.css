@@ -2,6 +2,12 @@ body {
     font-family: 'Montserrat', sans-serif !important;
 }
 
+.initial{
+    padding: 1em;
+    text-align: center;
+    color: gray;
+}
+
 /*MAP*/
 .gm-style-cc{
     display:none!important;
@@ -16,6 +22,15 @@ circle {
     fill: red;
     opacity: 0.5;
 }
+/*Filters*/
+#depthamount, #timeamount{
+    font-size: 0.75em;
+    width: 100%;
+    line-height: 2;
+    color: gray;
+    text-align: center;
+}
+
 /*INDIVIDUAL SCATTERPLOT*/
 #individual {
   width: 100%;
@@ -61,18 +76,15 @@ circle {
 
 
 /*SPIRAL GRAPH*/
-#spiral1{
+#spiral{
     font-size: 0.55em;
-    font-family: 'Arial';
-    stroke-width: 1;
-    stroke: gray;
-    width: 50%;
+    color:gray;
 }
 
 #spiral .arc{
     stroke-width: 0;
-
 }
+
 
 /*Spinner loading animation*/
 .overlay {

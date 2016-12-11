@@ -78,7 +78,9 @@ var Chart = (function(window,d3) {
       //if the size is smaller than the breakpoint, we decrease the left margin to give more space
       margin.left = parseInt(d3.select("#individual").style("width")) < breakPoint ? 5 : 40;
       width = parseInt(d3.select("#individual").style("width")) - margin.right - margin.left;
-      height = width*1.1;
+      if (width>125)
+        width = 125;
+      height = width;
       //max height is 600
       if (height > (600-margin.left-margin.right))
         height = (600-margin.left-margin.right);
@@ -116,9 +118,9 @@ var Chart = (function(window,d3) {
       wrapper.select('.y.axis')
         .call(yAxis);
 
-      depth.attr("transform", "translate(30,"+(height/2)+")rotate(-90)");
-      salinity.attr("transform", "translate("+ width +",30)");
-      temperature.attr("transform", "translate("+ width +"," + height +")");
+      depth.attr("transform", "translate(,"+(height/2)+")rotate(-90)");
+      salinity.attr("transform", "translate("+ (width - 20) +",30)");
+      temperature.attr("transform", "translate("+ (width -20) +"," + height +")");
   }
   
   return {
