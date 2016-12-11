@@ -1,12 +1,11 @@
 
 var ScatterPlot = (function(window,d3) {
-    var margin = {top: 0, right: 20, bottom: 22, left: 30, xlabel: 15, ylabel: 15},
+    var margin = {top: 0, right: 20, bottom: 22, left: 30, xlabel: 15, ylabel: 15, legend: 75},
     containerWidth,
     plot,
     width,
     height,
     svgContainer,
-    // svgContainer = d3.select("#scatterplot").append("svg"),
     data,
     xValue,
     xScale,
@@ -21,8 +20,10 @@ var ScatterPlot = (function(window,d3) {
     salMap,
     temp,
     tScale,
-    tMap
-    rMax = 8;
+    tMap,
+    rMax = 8,
+    legend,
+    salLegend;
 
     function initPlot(){
         return new Promise(function (resolve, reject) {
@@ -52,14 +53,6 @@ var ScatterPlot = (function(window,d3) {
             tMap = function(d) { return tScale(temp(d));};
 
 
-            // Adding stuff from render
-
-
-
-            // Done adding stuff from render
-
-
-
             window.addEventListener('resize', ScatterPlot.render);
         });
     }
@@ -82,14 +75,14 @@ var ScatterPlot = (function(window,d3) {
 
             containerWidth = parseInt(d3.select("#scatterplot").style("width"));
             width = containerWidth;
-            height = parseInt(containerWidth * .3);
+            height = parseInt(containerWidth * .35);
             svgContainer.attr("width", width)
                 .attr("height", height)
                 .append("g");
 
 
             //Scales and axis
-            xScale = d3.scale.linear().range([margin.left + margin.ylabel + 20, width - rMax]);
+            xScale = d3.scale.linear().range([margin.left + margin.ylabel + 20, width - rMax - margin.legend]);
             yScale = d3.scale.linear().range([rMax, height - rMax - margin.bottom - margin.xlabel]);
 
             xScale.domain([d3.min(data, xValue), d3.max(data, xValue)]);
@@ -98,21 +91,12 @@ var ScatterPlot = (function(window,d3) {
             xAxis = d3.svg.axis().scale(xScale).orient("bottom");
             yAxis = d3.svg.axis().scale(yScale).orient("left");
 
-            // Data
+            // Data Format
             // depth: 10
             // id: "11"
             // sal: 30.4436
             // temp: 3.2769
             // x: 1349.2694
-
-            // //Working logs
-            // console.log(d3.min(data, function(d) {
-            //     return d["depth"];
-            // }));
-            //
-            // console.log(d3.max(data, function(d) {
-            //     return d["depth"];
-            // }));
 
 
             //Enter data and draw dots
@@ -129,16 +113,62 @@ var ScatterPlot = (function(window,d3) {
 
             svgContainer.append("g")
             .attr("class", "x axis")
-            .attr("transform", "translate("+(margin.ylabel-rMax)+"," + (height - margin.bottom - margin.xlabel)+ ")")
+            .attr("transform", "translate("+(0)+"," + (height - margin.bottom - margin.xlabel)+ ")")
             .call(xAxis);
 
             svgContainer.append("g")
             .attr("class", "y axis")
-            .attr("transform", "translate(" + 6 + 0 + ", "+rMax+")")
+            .attr("transform", "translate("+60+ ", "+0+")")
             .call(yAxis);
 
             depthLabel.attr("transform", "translate("+margin.ylabel+","+(height/2)+")rotate(-90)");
             xLabel.attr("transform", "translate("+ width/2 + ","+(height - 1)+")");
+
+            // draw temperature legend
+            var legend = svgContainer.selectAll("legend")
+                .data(tScale.domain())
+              .enter().append("g")
+                .attr("class", "legend")
+                .attr("transform", function(d, i) { return "translate(" + 0 +"," + (20+(i*20)) + ")"; });
+
+            // draw legend colored rectangles
+            legend.append("rect")
+                .attr("x", width - margin.legend + 10)
+                .attr("width", 18)
+                .attr("height", 18)
+                .style("fill", tScale);
+
+            // draw legend text
+            legend.append("text")
+                .attr("x", width - margin.legend + 35)
+                .attr("y", 9)
+                .attr("dy", ".2em")
+                .style("text-anchor", "start")
+                .text(function(d) { return (d + "\xB0C");})
+
+
+
+            // draw salinity legend
+            var salLegend = svgContainer.selectAll("salLegend")
+                .data(salScale.domain())
+              .enter().append("g")
+                .attr("class", "salLegend")
+                .attr("transform", function(d, i) { return "translate(" + 0 +"," + (240+(i * 20))+ ")"; });
+
+            // draw legend sized circles
+            salLegend.append("circle")
+                .attr("cx", width - margin.legend + 19)
+                .attr("r", salScale)
+                .style("fill", "black");
+
+            // draw legend text
+            salLegend.append("text")
+                .attr("x", width - margin.legend + 34)
+                .attr("y", 3)
+                .attr("dy", ".2em")
+                .style("text-anchor", "start")
+                .text(function(d) { return (d + " sal");})
+
         });
     }
 
