@@ -141,6 +141,7 @@ function initSliders(){
                     $('#scatterplot + .spinner').css('display', 'none');
                 }()))))))));}
         });
+        console.log(depthSlider);
         $( "#depthamount" ).html("Depth range: " +  ($( "#depth-slider" ).slider( "values", 0 )) +
         " - " + ($( "#depth-slider" ).slider( "values", 1 )) + "m");
     });
