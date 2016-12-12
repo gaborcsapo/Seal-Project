@@ -41,6 +41,9 @@ function makeLocSelection(){
             if (locSelection[key].date < minTime)
                 minTime = locSelection[key].date;
         }
+        upperTime = maxTime;
+        lowerTime = minTime;
+
         if (depthSlider == undefined)
             initSliders();
         else {
@@ -48,8 +51,8 @@ function makeLocSelection(){
             timeSlider.slider("option", "max", maxTime.getTime() / 1000);
             timeSlider.slider("option", "min", minTime.getTime() / 1000);
         }
-        upperTime = maxTime;
-        lowerTime = minTime;
+        console.log(maxTime);
+        
         //console.log(locSelection)
     });
 }
