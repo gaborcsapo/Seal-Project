@@ -61,10 +61,11 @@ function makeTimeSelection(){
     return new Promise(function (resolve, reject) {
         queryKeys = [];
         for (key in locSelection) {
-            if (locSelection[key].date > lowerTime && locSelection[key].date < upperTime)
+            if (locSelection[key].date >= lowerTime && locSelection[key].date <= upperTime)
                 queryKeys.push(key);
         }
         timeSelection = _.pick(locSelection, queryKeys);
+        //console.log(timeSelection)
     });       
 }
 
@@ -104,8 +105,7 @@ function aggregateDays(){
         circleData = $.map(tempCircleData, function(value, index) {
             return [value];
         });
-        console.log(circleData);
-        
+        //console.log(circleData);      
     });
 }
 
@@ -129,22 +129,8 @@ function initSliders(){
                 lowerDepth = (ui.values[ 0 ]);
                 upperDepth = (ui.values[ 1 ]);
                 $( "#depthamount" ).html("Depth range: " + ((ui.values[ 0 ]).toString() ) + " - " + ((ui.values[ 1 ]).toString() ) + "m" );
-            },
-            change: function( event, ui ) {
-                makeDepthSelection().then(
-                aggregateDays().then(
-                tempSpiral.init().then(
-                tempSpiral.render().then(
-                salSpiral.init().then(
-                salSpiral.render().then(
-                ScatterPlot.init().then(
-                ScatterPlot.render().then(
-                function(){
-                    $('#spiral + .spinner').css('display', 'none');
-                    $('#scatterplot + .spinner').css('display', 'none');
-                }()))))))));}
+            }
         });
-        console.log(depthSlider);
         $( "#depthamount" ).html("Depth range: " +  ($( "#depth-slider" ).slider( "values", 0 )) +
         " - " + ($( "#depth-slider" ).slider( "values", 1 )) + "m");
     });
@@ -159,21 +145,7 @@ function initSliders(){
                 lowerTime = new Date(ui.values[ 0 ] *1000);
                 upperTime = new Date(ui.values[ 1 ] *1000);
                 $( "#timeamount" ).html( (new Date(ui.values[ 0 ] *1000).toDateString() ) + " - " + (new Date(ui.values[ 1 ] *1000)).toDateString() );
-            },
-            change: function( event, ui ) {
-                makeTimeSelection().then(
-                makeDepthSelection().then(
-                aggregateDays().then(
-                tempSpiral.init().then(
-                tempSpiral.render().then(
-                salSpiral.init().then(
-                salSpiral.render().then(
-                ScatterPlot.init().then(
-                ScatterPlot.render().then(
-                function(){
-                    $('#spiral + .spinner').css('display', 'none');
-                    $('#scatterplot + .spinner').css('display', 'none');
-                }())))))))));}
+            }
         });
         $( "#timeamount" ).html((new Date($( "#time-slider" ).slider( "values", 0 )*1000).toDateString()) +
         " - " + (new Date($( "#time-slider" ).slider( "values", 1 )*1000)).toDateString());

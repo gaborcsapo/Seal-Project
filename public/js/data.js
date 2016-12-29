@@ -6,7 +6,6 @@ function createDataPoint(data){
         data.forEach(function(d) {
             //incrementing id to create unique identifier
             id++;
-
             // DELETE CAST TO NUMBER EVERYTHINg!!!!!!!!!!!!!!!!!
             d.LAT = Number(d.LAT);
             d.LON = Number(d.LON);

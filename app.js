@@ -9,6 +9,10 @@ app.use(express.static(__dirname + '/public'));
 var port = process.env.PORT || 3000; 
 
 //ROUTES
+app.get('/instruction', function (reqqest, response) {
+  response.render('instruction.html');
+})
+
 app.get("*", function(request, response){
 	response.render('index');
 });

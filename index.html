@@ -25,7 +25,7 @@
       </a>
       <ul class="nav navbar-nav" style="float:right">
         <li class="nav-item">
-          <a class="nav-link" href="#">Instructions</a>
+          <a class="nav-link" href="/instruction">Instructions</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">About</a>
@@ -51,18 +51,8 @@
                   <p id="depthamount" style="border: 0;"></p>
                   <div id="time-slider"></div>
                   <p id="timeamount" style="border: 0;"/></p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-12 col-sm-6">
-              <div class="card">
-                <div class="card-header text-muted">
-                  <i class="fa fa-bar-chart" aria-hidden="true" ></i>
-                  Individual figure
-                </div>
-                <div id="individual" class="card-block">
-                  <p class="initial">Click on a point to see its details...</p>
-                  <!--Individual figure-->
+
+                  <a class="btn btn-secondary" role="button" id="makeSel">Make selection</a>
                 </div>
               </div>
             </div>
@@ -100,15 +90,30 @@
           </div>
         </div>
 
-        <div class="col-sm-12">
+        <div class="col-sm-6">
           <div class="card">
             <div class="card-header text-muted">
               <i class="fa fa-calendar" aria-hidden="true" ></i>
-              Change over the years
+              Change of temperature over the years
             </div>
             <div class="overlay card-block">
               <!--Spiral graph code code comes here-->
-              <div id="spiral"></div>
+              <div id="temp"></div>
+              <div class="spinner"></div>
+              <p class="initial">Please select an area on the map...</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-header text-muted">
+              <i class="fa fa-calendar" aria-hidden="true" ></i>
+              Change of salinity over the years
+            </div>
+            <div class="overlay card-block">
+              <!--Spiral graph code code comes here-->
+              <div id="sal"></div>
               <div class="spinner"></div>
               <p class="initial">Please select an area on the map...</p>
             </div>
@@ -117,6 +122,14 @@
 
       </div>
     </div>
+
+    <footer class="text-muted padding-top" style="background-color: #f7f7f9;">
+      <div class="container">
+        <p class="float-xs-right">
+          <a href="#">Back to top</a>
+        </p>
+      </div>
+    </footer>
     <script src="/js/jquery.js"></script>
     <script src="/js/jquery-ui.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.7/js/tether.min.js" integrity="sha384-XTs3FgkjiBgo8qjEjBk0tGmf3wPrWtA6coPfQDfFEY8AnYJwjalXCiosYRBIBZX8" crossorigin="anonymous"></script>

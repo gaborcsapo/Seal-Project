@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="Visualization of CTD data collected by CSLC" />
+
+    <title>Seal Project</title>
+
+    <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="styles.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous"><link rel="icon" href="img/favicon.png" type="image/png" />
+    <link rel="shortcut icon" href="favicon.ico" />
+    
+  </head>
+  <body>
+    <nav class="navbar navbar-light bg-faded">
+      <a class="navbar-brand" href="/">
+        <img src="/img/logo.png" width="30" height="30" style="display:inline-block" class="align-top" alt="">
+        Visualizing Multivariate Ocean Data with Multiple Views
+      </a>
+      <ul class="nav navbar-nav" style="float:right">
+        <li class="nav-item">
+          <a class="nav-link" href="#">Instructions</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">About</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="container padding-top">
+      <div class="row">
+        <div class="col-lg-12">
+          <h3>The web app has three main sections:</h3>
+          <ul>
+            <li>Selection on the map and other filtering options</li>
+            <li>The scatterplot depicting a custom cross section of selected part of the fjord</li>
+            <li>The spiral graph visualizing temporal change in the selected area</li>
+          </ul>
+          <p>In the following paragraphs I’ll explain how these parts are derived and how they are meant to be understood.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="container padding-top">
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          <h3>The map</h3>
+          <p>
+            The map is populated by location points where seals sent off data. There hundreds of thousands of these points, which is hard to put on a map, so I decided to put them in clusters. The number in the middle of each cluster represents the number of points in the collection. Zooming in breaks up these clusters and once you get to the level of individual points, hovering over the points reveals the details of it and clicking on them creates a small scatter plot of the data point.
+            <br>You can choose the selection tools in the toolbar at the top of the map.
+            <br>Use the “Select” button to make a selection. A selection can <b>only</b> be made if an area and two points are selected on the map. These determine how the data is sampled.
+          </p>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <img src="/img/map.jpg" class="img-fluid">
+        </div>
+      </div>  
+    </div>
+
+    <div class="container padding-top">
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          <h3>The cross section</h3>
+          <p>
+            A new spiral graph is created every time a new selection is made.
+            <br>The selected area on the map serves as the sample area for the cross section. 
+            <br>The selected two points are automatically connected into a line. In reality, each visible point on the map is a vertical stack of data points at different depths. We map all these data points to the vertical 2D plane determined by the previously created line (see image). This 2D plane is the cross section of the area selected at the angle determined by the line connecting the selected 2 points.
+          </p>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <img src="/img/points.jpg" class="img-fluid">
+        </div>
+      </div>
+    </div>
+
+    <div class="container padding-top">
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          <h3>The spiral graph</h3>
+          <p>
+            A new spiral graph is created every time a new selection is made.
+            <br>Each period of the spiral is a new year. Therefore an arbitrary radius of the spiral crosses the same day and month of each year. This allows to easily compare the values and the change between each year. 
+            <br>Only the points in the selected area are used to create the graph. The average of the temperature and salinity values are taken from the same day.
+          </p>
+        </div>
+
+        <div class="col-sm-12 col-md-6">
+          <h3>Data used</h3>
+          <ul class="list-unstyled">
+            <li>ct71</li>
+            <li>rs14</li>
+            <li>rs15</li>
+            <li>rs17</li>
+            <li>rs19</li>
+            <li>rs22</li>
+            <li>rs23</li>
+            <li>rs27</li>
+            <li>rs29</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="text-muted padding-top" style="background-color: #f7f7f9;">
+      <div class="container">
+        <p class="float-xs-right">
+          <a href="#">Back to top</a>
+        </p>
+        <p>Visualizing Multivariate Ocean Data with Multiple Views</p>
+      </div>
+    </footer>
+
+    
+   
+    <script src="/js/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.7/js/tether.min.js" integrity="sha384-XTs3FgkjiBgo8qjEjBk0tGmf3wPrWtA6coPfQDfFEY8AnYJwjalXCiosYRBIBZX8" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+ </body>
+</html>

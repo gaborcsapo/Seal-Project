@@ -43,15 +43,9 @@ var ScatterPlot = (function(window,d3) {
 
             temp = function(d) { return d["temp"];};
             tScale = d3.scale.threshold()
-                        //Light blue / orange
-                        //http://stackoverflow.com/questions/21977786/star-b-v-color-index-to-apparent-rgb-color/22630970#22630970
                         .domain([-2, -1.5, -1, -.5, 0, .5, 1, 1.5, 2, 2.5]) //11 colors
                         .range(["#9bb0ff", "#9cb2ff", "#aabfff", "#b5c7ff", "#d5deff", "#f4f1ff", "#fff5f2", "#ffefdd", "#ffd2a1", "#ffc483", "#ffc66d"]);
-                        // //Gradient from blue to red
-                        // .domain([-1, 0, 1, 2])
-                        // .range(["#0000FF", "#4000BF", "#800080", "#BF0040", "#FF0000"]),
             tMap = function(d) { return tScale(temp(d));};
-
 
             window.addEventListener('resize', ScatterPlot.render);
         });
@@ -80,7 +74,6 @@ var ScatterPlot = (function(window,d3) {
                 .attr("height", height)
                 .append("g");
 
-
             //Scales and axis
             xScale = d3.scale.linear().range([margin.left + margin.ylabel + 20, width - rMax - margin.legend]);
             yScale = d3.scale.linear().range([rMax, height - rMax - margin.bottom - margin.xlabel]);
@@ -97,8 +90,6 @@ var ScatterPlot = (function(window,d3) {
             // sal: 30.4436
             // temp: 3.2769
             // x: 1349.2694
-
-
             //Enter data and draw dots
             plot = svgContainer.selectAll("dots")
                 .data(data)
@@ -109,7 +100,6 @@ var ScatterPlot = (function(window,d3) {
                 .attr("cy", yMap)
                 .style("fill", tMap)
                 .style("opacity", .7);
-
 
             svgContainer.append("g")
             .attr("class", "x axis")
@@ -146,8 +136,6 @@ var ScatterPlot = (function(window,d3) {
                 .style("text-anchor", "start")
                 .text(function(d) { return (d + "\xB0C");})
 
-
-
             // draw salinity legend
             var salLegend = svgContainer.selectAll("salLegend")
                 .data(salScale.domain())
@@ -168,7 +156,6 @@ var ScatterPlot = (function(window,d3) {
                 .attr("dy", ".2em")
                 .style("text-anchor", "start")
                 .text(function(d) { return (d + " sal");})
-
         });
     }
 
@@ -176,6 +163,4 @@ var ScatterPlot = (function(window,d3) {
       render : render,
       init : initPlot
     }
-
-
 })(window,d3);
