@@ -51,8 +51,7 @@ function makeLocSelection(){
             timeSlider.slider("option", "max", maxTime.getTime() / 1000);
             timeSlider.slider("option", "min", minTime.getTime() / 1000);
         }
-        console.log(maxTime);
-        
+        //console.log(maxTime);
         //console.log(locSelection)
     });
 }
@@ -75,15 +74,16 @@ function makeDepthSelection(){
         depthSelection = [];
         for (key in timeSelection) {
             for (var i = 0; i < timeSelection[key].points.length; i++){
-                if (timeSelection[key].points[i].depth > lowerDepth && timeSelection[key].points[i].depth < upperDepth)
+                if (timeSelection[key].points[i].depth > lowerDepth && timeSelection[key].points[i].depth < upperDepth){
                     depthSelection.push({
                         'id': key, 
                         'date': timeSelection[key].date, 
-                        'x':bdccGeoDistanceToPolyMtrs(markerLine, new google.maps.LatLng(timeSelection[key].loc.lat, timeSelection[key].loc.lng)), 
+                        'x': Math.sqrt(Math.pow(google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(timeSelection[key].loc.lat, timeSelection[key].loc.lng),marker_list[0].overlay.getPosition()), 2) - Math.pow(bdccGeoDistanceToPolyMtrs(markerLine, new google.maps.LatLng(timeSelection[key].loc.lat, timeSelection[key].loc.lng)), 2))/1000, 
                         'depth':timeSelection[key].points[i].depth, 
                         'sal':timeSelection[key].points[i].sal, 
                         'temp':timeSelection[key].points[i].temp
                     })
+                }
             }
         }
         //console.log(depthSelection);
@@ -97,7 +97,7 @@ function aggregateDays(){
             if (_.has(tempCircleData, depthSelection[i].date.getTime()/1000)){
                 tempCircleData[depthSelection[i].date.getTime()/1000].counter++;
                 tempCircleData[depthSelection[i].date.getTime()/1000].temp += depthSelection[i].temp;
-                tempCircleData[depthSelection[i].date.getTime()/1000].temp += depthSelection[i].sal;
+                tempCircleData[depthSelection[i].date.getTime()/1000].sal += depthSelection[i].sal;
             } else {
                 tempCircleData[depthSelection[i].date.getTime()/1000] = {'date': depthSelection[i].date, 'counter':1, 'sal': depthSelection[i].sal, 'temp': depthSelection[i].temp};
             }
@@ -105,7 +105,7 @@ function aggregateDays(){
         circleData = $.map(tempCircleData, function(value, index) {
             return [value];
         });
-        //console.log(circleData);      
+        console.log(circleData);      
     });
 }
 

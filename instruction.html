@@ -23,6 +23,9 @@
       </a>
       <ul class="nav navbar-nav" style="float:right">
         <li class="nav-item">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="#">Instructions</a>
         </li>
         <li class="nav-item">
@@ -50,9 +53,10 @@
         <div class="col-sm-12 col-md-6">
           <h3>The map</h3>
           <p>
-            The map is populated by location points where seals sent off data. There hundreds of thousands of these points, which is hard to put on a map, so I decided to put them in clusters. The number in the middle of each cluster represents the number of points in the collection. Zooming in breaks up these clusters and once you get to the level of individual points, hovering over the points reveals the details of it and clicking on them creates a small scatter plot of the data point.
-            <br>You can choose the selection tools in the toolbar at the top of the map.
-            <br>Use the “Select” button to make a selection. A selection can <b>only</b> be made if an area and two points are selected on the map. These determine how the data is sampled.
+            The map is populated by location points where seals sent off data. There are hundreds of thousands of these points, which is hard to put on a map, so I decided to put them in clusters. The number in the middle of each cluster represents the number of points in the collection. Zooming in breaks up these clusters and once you get to the level of individual points. 
+            <br><br>Click on the individual points to reveal the details of it and clicking on them creates a small scatter plot of the data point.
+            <br><br>Choose the selection tools in the toolbar at the top of the map.
+            <br><br>Use the “Make selection” button to make a selection AFTER an area and two points are selected on the map. These determine how the data is sampled.
           </p>
         </div>
         <div class="col-sm-12 col-md-6">
@@ -67,8 +71,10 @@
           <h3>The cross section</h3>
           <p>
             A new spiral graph is created every time a new selection is made.
-            <br>The selected area on the map serves as the sample area for the cross section. 
-            <br>The selected two points are automatically connected into a line. In reality, each visible point on the map is a vertical stack of data points at different depths. We map all these data points to the vertical 2D plane determined by the previously created line (see image). This 2D plane is the cross section of the area selected at the angle determined by the line connecting the selected 2 points.
+            <br>Only points within the selected area are taken into account. 
+            <br>The selected two red points (A and B) are automatically connected with a line. In reality, each visible point on the map is a vertical stack of data points at different depths. We map all these data points to the vertical 2D plane determined by the previously created line. This 2D plane is the cross section of the area selected at the angle determined by the line connecting the selected 2 points.
+            <br><br>The points to the left are closer to A, while the other end of the cross section are closer to B as denoted by the A and B in each respective corner of the view.
+            <br><br>Zoom and pan the cross section with your mouse to reveal details. 
           </p>
         </div>
         <div class="col-sm-12 col-md-6">
@@ -84,7 +90,8 @@
           <p>
             A new spiral graph is created every time a new selection is made.
             <br>Each period of the spiral is a new year. Therefore an arbitrary radius of the spiral crosses the same day and month of each year. This allows to easily compare the values and the change between each year. 
-            <br>Only the points in the selected area are used to create the graph. The average of the temperature and salinity values are taken from the same day.
+            <br><br>Only the points in the selected area are used to create the graph. The average of the temperature and salinity values are taken from the same day. 
+            <br><br>For now the only valid values are for temperature from -2 to 3 for salinity from 32 to 34. Anything outside this range is discarded. In the next version, the user will be able to manually set the limit for each value.
           </p>
         </div>
 

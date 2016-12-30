@@ -97,10 +97,14 @@ circle {
     shape-rendering: crispEdges;
 }
 
+#scatterplot .x path {
+    stroke: red !important;
+}
+
 
 /*SPIRAL GRAPH*/
 #sal, #temp{
-    font-size: 0.55em;
+    font-size: 0.7em;
     color:gray;
 }
 

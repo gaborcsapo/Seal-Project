@@ -12,6 +12,10 @@ markerSet = 0,
 markerList = [],
 markerLine;
 
+var labels = 'AB';
+var labelIndex = 0;
+
+
 function clearSelection () {
     if (selectedShape) {
         if (selectedShape.type !== 'marker') 
@@ -81,7 +85,8 @@ function loadedMap(){
             },
             markerOptions: {
                 icon: markerImage,
-                draggable: true
+                draggable: false,
+                label: labels[labelIndex++ % labels.length]
             },
             polylineOptions: {
                 editable: true,
@@ -100,22 +105,17 @@ function loadedMap(){
                         content: '<div id="individual"></div>'
                     });
                     google.maps.event.addListener(infowindow, 'domready', function() {
-
                         // Reference to the DIV which receives the contents of the infowindow using jQuery
                         var iwOuter = $('.gm-style-iw');
-
                         /* The DIV we want to change is above the .gm-style-iw DIV.
                             * So, we use jQuery and create a iwBackground variable,
                             * and took advantage of the existing reference to .gm-style-iw for the previous DIV with .prev().
                             */
                         var iwBackground = iwOuter.prev();
-
                         // Remove the background shadow DIV
                         iwBackground.children(':nth-child(2)').css({'display' : 'none'});
-
                         // Remove the white background DIV
                         iwBackground.children(':nth-child(4)').css({'display' : 'none'});
-
                     });
                     singleMarker = new google.maps.Marker({
                         position: sdata[innerKey]['loc'],
@@ -137,11 +137,18 @@ function loadedMap(){
 
         // Shape is Drawn: whenever a shape or marker is drawn this overlaycomplete event fires
         google.maps.event.addListener(drawingManager, 'overlaycomplete', function (e) {
+            console.log(labelIndex);
             var newShape = e.overlay; 
             newShape.type = e.type;
             if (newShape.type == 'polygon'){
                 shape_list.push(newShape);
             } else if (newShape.type == 'marker') {
+                drawingManager.markerOptions = {
+                    icon: markerImage,
+                    draggable: false,
+                    label: labels[labelIndex++ % labels.length]
+                };
+
                 //there can be only 2 markers and if there are 2 we should connect them
                 marker_list.push(e);
                 if (marker_list.length >2){

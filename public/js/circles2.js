@@ -46,7 +46,7 @@ var Spiral = (function(parameter,window,d3){
     lineFunction,
     skelettonFunction,
     strokewidth,
-    svgContainer = d3.select("#"+parameter).append("svg").attr("id", parameter).attr('width', '50%'),
+    svgContainer = d3.select("#"+parameter).append("svg").attr("id", parameter),
     spiralCont,
     spiralLine,
     spiralColor,
@@ -58,6 +58,18 @@ var Spiral = (function(parameter,window,d3){
     months = ['Dec','Jan','Feb','Mar','Apr','May','June','July','Aug','Sept','Oct','Nov'],
     periodNames = [],
     periodNameSVG = null;
+
+    //need to make dynamically settable
+    var upperLimit;
+    var lowerLimit;
+    if (parameter == 'sal'){
+      upperLimit = 34;
+      lowerLimit = 32;
+    }
+    if (parameter == 'temp'){
+      upperLimit = 3;
+      lowerLimit = -2;
+    }
 
     function calcSpiral(){  
       return new Promise(function (resolve, reject) {
@@ -114,10 +126,10 @@ var Spiral = (function(parameter,window,d3){
                             'pos':baseRadius + donutThickness + periodIndex*(donutThickness + donutDistance) + donutDistance/3
                             });
         }
-
-        colorScale.domain(Object.keys(circleData).map(function(a) {return circleData[a][parameter];}, []))
-                  .range(["#9bb0ff", "#9cb2ff", "#aabfff", "#b5c7ff", "#d5deff", "#f4f1ff", "#fff5f2", "#ffefdd", "#ffd2a1", "#ffc483", "#ffc66d"]);
-            
+        // average = (d3.min(circleData, function(d) {return d[parameter]/d.counter;}) + d3.max(circleData, function(d) {return d[parameter]/d.counter;}))/2;
+        // colorScale.domain([d3.min(circleData, function(d) {return d[parameter]/d.counter;}), average, d3.max(circleData, function(d) {return d[parameter]/d.counter;})]).range(["#F18200", "#f7f7f7", "#5313BE"]);
+        colorScale.domain([lowerLimit, (lowerLimit+upperLimit)/2, upperLimit]).range(["#F18200", "#f7f7f7", "#5313BE"]);
+        
         xScale.domain([d3.min(spiralElemPos, function(d) {return d.p[1].x - padding;}), d3.max(spiralElemPos, function(d) {return d.p[1].x + padding;})]);
         yScale.domain([d3.min(spiralElemPos, function(d) {return d.p[1].y - padding;}), d3.max(spiralElemPos, function(d) {return d.p[1].y + padding;})]);
         lineFunction = d3.svg.line()
@@ -137,15 +149,15 @@ var Spiral = (function(parameter,window,d3){
         xScale.range([0,width]);
         yScale.range([0,width]);
         spiralStartDate = new Date(lowerTime.getFullYear(),0,1,0,0,0,0); 
-        console.log(spiralStartDate);
+        //console.log(spiralStartDate);
         // spiralName.attr("x", width/2)
         // .attr("y", width/2);
         
         
         spiralLine = spiralCont.selectAll('polygon')
           .data(circleData)
-          .attr("fill", function(d){return colorScale(d[parameter]/d.counter);})
-          .attr("stroke", function(d){return colorScale(d[parameter]/d.counter);})
+          .attr("fill", function(d){if (d[parameter]/d.counter>upperLimit || d[parameter]/d.counter<lowerLimit) return 'white'; return colorScale(d[parameter]/d.counter);})
+          .attr("stroke", function(d){if (d[parameter]/d.counter>upperLimit || d[parameter]/d.counter<lowerLimit) return 'white'; return colorScale(d[parameter]/d.counter);})
           .attr("points",function(d) {
                 return spiralElemPos[daysBetween(d.date, spiralStartDate)].p.map(function(d) {
                     return [xScale(d.x),yScale(d.y)].join(",");}
@@ -153,8 +165,8 @@ var Spiral = (function(parameter,window,d3){
           })     
         spiralLine.enter()
           .append('polygon')
-          .attr("fill", function(d){return colorScale(d[parameter]/d.counter);})
-          .attr("stroke", function(d){return colorScale(d[parameter]/d.counter);})
+          .attr("fill", function(d){if (d[parameter]/d.counter>upperLimit || d[parameter]/d.counter<lowerLimit) return 'white'; return colorScale(d[parameter]/d.counter);})
+          .attr("stroke", function(d){if (d[parameter]/d.counter>upperLimit || d[parameter]/d.counter<lowerLimit) return 'white'; return colorScale(d[parameter]/d.counter);})
           .attr("points",function(d) {
                 return spiralElemPos[daysBetween(d.date, spiralStartDate)].p.map(function(d) {
                     return [xScale(d.x),yScale(d.y)].join(",");}
@@ -220,6 +232,20 @@ var Spiral = (function(parameter,window,d3){
           .text(function(d){return d.name;})
           .attr("transform", function(d){return 'translate(' + xScale(d.pos) + ',' +yScale(0) + ')rotate(90)';});
         periodNameSVG.exit().remove();
+
+        svgContainer.append("g")
+          .attr("class", "legendLinear")
+          .attr("transform", "translate(20,20)");
+
+        var legendLinear = d3.legend.color()
+          .shapeWidth(30)
+          .orient('horizontal')
+          .scale(colorScale);
+
+        svgContainer.select(".legendLinear")
+          .call(legendLinear);  
+
+
       });      
     }
 
@@ -232,7 +258,7 @@ var Spiral = (function(parameter,window,d3){
         //   .attr('font-size', '2em');
         xScale = d3.scale.linear();
         yScale = d3.scale.linear();
-        colorScale = d3.scale.threshold();
+        colorScale = d3.scale.linear();
     }); 
     
     return {
@@ -240,6 +266,6 @@ var Spiral = (function(parameter,window,d3){
       init : calcSpiral
     }
   });
-
+  console.log('spirals');
   var tempSpiral = Spiral('temp', window, d3);
   var salSpiral = Spiral('sal', window, d3);
