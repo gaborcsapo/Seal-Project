@@ -105,16 +105,10 @@ function loadedMap(){
                         content: '<div id="individual"></div>'
                     });
                     google.maps.event.addListener(infowindow, 'domready', function() {
-                        // Reference to the DIV which receives the contents of the infowindow using jQuery
+                        //way to make infowindow more efficient with area used but very buggy!!!
                         var iwOuter = $('.gm-style-iw');
-                        /* The DIV we want to change is above the .gm-style-iw DIV.
-                            * So, we use jQuery and create a iwBackground variable,
-                            * and took advantage of the existing reference to .gm-style-iw for the previous DIV with .prev().
-                            */
                         var iwBackground = iwOuter.prev();
-                        // Remove the background shadow DIV
                         iwBackground.children(':nth-child(2)').css({'display' : 'none'});
-                        // Remove the white background DIV
                         iwBackground.children(':nth-child(4)').css({'display' : 'none'});
                     });
                     singleMarker = new google.maps.Marker({
@@ -129,7 +123,7 @@ function loadedMap(){
                     return singleMarker;
                 }(key)});
                     
-                // Add a marker clusterer to manage the markers.
+                // Add a marker clusterer to manage the large number of markers.
                 var markerCluster = new MarkerClusterer(map, markers,
                     {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
             });
@@ -143,6 +137,7 @@ function loadedMap(){
             if (newShape.type == 'polygon'){
                 shape_list.push(newShape);
             } else if (newShape.type == 'marker') {
+                //toggles the label of the new marker between a and b
                 drawingManager.markerOptions = {
                     icon: markerImage,
                     draggable: false,
@@ -220,6 +215,7 @@ function loadedMap(){
         }());
     }
 
+    //loading the files in a clear sequence to avoid asynch
     promiseMap
     .then(promiseFile1
     .then(function(data){return createDataPoint(data)
@@ -242,6 +238,7 @@ function loadedMap(){
     .then(loadedFiles())
     }))}))}))}))}))}))}))}))})); 
 
+    //gets called when user decides to make a new selection and presses teh button
     $( "#makeSel" ).click(function() {
         if((marker_list.length == 2) && (shape_list.length !== 0)){       
             $('#scatterplot + .spinner + .initial').css('display', 'none');

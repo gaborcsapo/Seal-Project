@@ -13,11 +13,13 @@ var maxTime;
 var dateParts;
 var circleData = {};
 
+//selecting the point that are in the selected area on the map
 function makeLocSelection(){
     return new Promise(function (resolve, reject) {
         locSelection = _.pick(sdata, queryKeys);
         var key;
         maxDepth = 0;
+        //checking what is the earliest and latest date for the slider
         if (Object.prototype.toString.call(locSelection[Object.keys(locSelection)[0]].date) !== "[object Date]"){
             dateParts = locSelection[Object.keys(locSelection)[0]].date.split('/');
             minTime = new Date(dateParts[2],dateParts[0]-1,dateParts[1]);
@@ -26,7 +28,7 @@ function makeLocSelection(){
             minTime = locSelection[Object.keys(locSelection)[0]].date;
             maxTime = locSelection[Object.keys(locSelection)[0]].date;
         }
-        
+        //checking maximum depth and minimum for the slider
         for (key in locSelection) {
             if (Object.prototype.toString.call(locSelection[key].date) !== "[object Date]"){
                 dateParts = locSelection[key].date.split('/');
@@ -51,11 +53,11 @@ function makeLocSelection(){
             timeSlider.slider("option", "max", maxTime.getTime() / 1000);
             timeSlider.slider("option", "min", minTime.getTime() / 1000);
         }
-        //console.log(maxTime);
         //console.log(locSelection)
     });
 }
 
+//with the sliders we can change the valid dates for the points visualized
 function makeTimeSelection(){
     return new Promise(function (resolve, reject) {
         queryKeys = [];
@@ -68,6 +70,7 @@ function makeTimeSelection(){
     });       
 }
 
+//using the slider we can set what depth values are valid
 function makeDepthSelection(){
     return new Promise(function (resolve, reject) {
         queryKeys = [];
@@ -90,6 +93,7 @@ function makeDepthSelection(){
     });  
 }
 
+//in the spiral we only want one value for each day, so if there are more values on the same day, we take the average
 function aggregateDays(){
     return new Promise(function (resolve, reject) {
         tempCircleData = {};
@@ -109,6 +113,7 @@ function aggregateDays(){
     });
 }
 
+//calcs the no of day between two dates
 function daysBetween(date1, date2) {
     var ONE_DAY = 1000 * 60 * 60 * 24
     var date1_ms = date1.getTime()
@@ -117,6 +122,7 @@ function daysBetween(date1, date2) {
     return Math.round(difference_ms/ONE_DAY)
 }
 
+//creates the two sliders
 function initSliders(){
     $('#filters > .initial').css('display', 'none');
     $(function() {
@@ -124,7 +130,7 @@ function initSliders(){
             range: true,
             min: 0,
             max: maxDepth,
-            values: [ 10, 30 ],
+            values: [ 0, 50 ],
             slide: function( event, ui ) {
                 lowerDepth = (ui.values[ 0 ]);
                 upperDepth = (ui.values[ 1 ]);
@@ -152,15 +158,6 @@ function initSliders(){
     });
 }
   
-
-
-
-
-
-
-
-
-
 
 
 		
