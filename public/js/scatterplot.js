@@ -42,7 +42,7 @@ var ScatterPlot = (function(window,d3) {
 
             tScale = d3.scale.threshold()
                         .domain([-2, -1.5, -1, -.5, 0, .5, 1, 1.5, 2, 2.5])
-                        .range(["#9bb0ff", "#9cb2ff", "#aabfff", "#b5c7ff", "#d5deff", "#f4f1ff", "#fff5f2", "#ffefdd", "#ffd2a1", "#ffc483", "#ffc66d"]);
+                        .range(["#440154","#482576","#414487","#34608d","#2a788e","#21918c","#22a884","#44bf70","#7ad151","#bddf26","#fde725"]);
             tMap = function(d) { return tScale(d["temp"]);};
 
             window.addEventListener('resize', ScatterPlot.render);
