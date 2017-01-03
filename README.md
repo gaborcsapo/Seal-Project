@@ -4,8 +4,8 @@ Approached the Center for Sea Level Change looking for project ideas for a class
 [The prototype of the project is available by clicking on this link](http://sealproject.herokuapp.com)
 
 ##How to use
-[See how an earlier version worked here](https://www.youtube.com/watch?v=aJQq8xtyHqA)
+<a href="https://www.youtube.com/watch?v=aJQq8xtyHqA" target="_blank">See how an earlier version worked here</a>
 
-[Or check out the detailed description of how it works](http://sealproject.herokuapp.com/instruction)
+<a href="http://sealproject.herokuapp.com/instruction" target="_blank">Or check out the detailed description of how it works</a>
 
-[Or read an academic paper on the project](http://sealproject.herokuapp.com/paper)
+<a href="http://sealproject.herokuapp.com/paper" target="_blank">Or read an academic paper on the project</a>
