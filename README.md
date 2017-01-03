@@ -5,5 +5,7 @@ Approached the Center for Sea Level Change looking for project ideas for a class
 
 ##How to use
 [See how an earlier version worked here](https://www.youtube.com/watch?v=aJQq8xtyHqA)
+
 [Or check out the detailed description of how it works](http://sealproject.herokuapp.com/instruction)
+
 [Or read an academic paper on the project](http://sealproject.herokuapp.com/paper)
